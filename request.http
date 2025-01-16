@@ -1,0 +1,46 @@
+###
+POST http://localhost:3000/games HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Una breve histodffria del tiempo",
+  "description": "Un libro sobre la física y el cosmos escrito por Stephen Hawking.",
+  "genres": "Ciencia",
+  "platform": "Físico"
+}
+
+###
+GET http://localhost:3000/ HTTP/1.1
+
+
+###
+GET http://localhost:3000/games HTTP/1.1
+
+
+###
+GET http://localhost:3000/games/67873112eb7578fed1fa440b HTTP/1.1
+
+###
+PUT http://localhost:3000/games/67873112eb7578fed1fa440b
+Content-Type: application/json
+
+{
+  "name": "Una compleja historia del tiempo",
+  "description": "Un libro sobre la física y el cosmos escrito por Stephen Hawking.",
+  "hhhhh": "hhhg",
+  "platform": "Físico"
+}
+
+###
+PATCH http://localhost:3000/games/678877e7f049744cae6c014a
+Content-Type: application/json
+
+{
+  "name": "Una historia del tiempo",
+  "description": "Un libro sobre la física y el cosmos escrito por Stephen Hawking.",
+  "genre": "historia",
+  "platform": "Físico"
+}
+
+###
+DELETE  http://localhost:3000/games/678870991786dda9ab69d7b7 HTTP/1.1
