@@ -25,4 +25,17 @@ class UnauthorizedError extends CustomError {
     }
 }
 
-export { CustomError, ValidationError, NotFoundError, UnauthorizedError };
+class ConflictError extends CustomError {
+    constructor(message) {
+        super(409, message || "Conflicto en la solicitud");
+    }
+}
+
+class MethodNotAllowedError extends CustomError {
+    constructor(message) {
+        super(405, message || "Método no permitido");
+    }
+}
+
+
+export { CustomError, ValidationError, NotFoundError, UnauthorizedError, ConflictError, MethodNotAllowedError };

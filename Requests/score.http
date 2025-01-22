@@ -1,0 +1,38 @@
+###
+POST http://localhost:3000/scores HTTP/1.1
+Content-Type: application/json
+
+{
+    "playerId": "678ad42c3a28a633d16c57f3",
+    "gameId": "678ad5ec112c1d209ee0d510",
+    "score": 322
+}
+
+###
+GET http://localhost:3000/scores HTTP/1.1
+
+###
+GET http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
+
+###
+PUT http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
+Content-Type: application/json
+
+{
+    "color": "red",
+    "value": "1",
+    "gameId": "678ad5ec112c1d209ee0d510"
+}
+
+###
+PATCH http://localhost:3000/scores/678ad57d112c1d209ee0d508 HTTP/1.1
+Content-Type: application/json
+
+{
+    "color": "red",
+    "value": "1",
+    "gameId": "678ad5ec112c1d209ee0d510"
+}
+
+###
+DELETE http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1

@@ -1,5 +1,5 @@
 import { connectDB } from "./config/database.js";
-import app from "./middlewares/authMiddleware.js";
+import app from "./presentation/middlewares/authMiddleware.js";
 
 
 connectDB(); 

@@ -1,0 +1,38 @@
+###
+POST http://localhost:3000/games HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Juego 2",
+    "status": true,
+    "maxPlayers": 4
+}
+
+###
+GET http://localhost:3000/games HTTP/1.1
+
+###
+GET http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+
+###
+PUT http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "juego 10",
+  "status": true,
+  "maxPlayers": 2
+}
+
+###
+PATCH http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "juego 11",
+  "status": true,
+  "maxPlayers": 2
+}
+
+###
+DELETE http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1

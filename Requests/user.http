@@ -1,0 +1,41 @@
+###
+POST http://localhost:3000/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Una breve histodffria del tiempo",
+  "age": 20,
+  "email": "edwin@gmail.com"
+}
+
+
+###
+GET http://localhost:3000/users HTTP/1.1
+
+
+###
+GET http://localhost:3000/users/678a0ce3359ad6b0534f888c HTTP/1.1
+
+###
+PUT http://localhost:3000/users/678a0ce3359ad6b0534f888c
+Content-Type: application/json
+
+{
+  "name": "Una del tiempo",
+  "age": 22,
+  "email": "Físico@gmali.com"
+}
+
+###
+PATCH http://localhost:3000/users/678909d3b8180e8538355f72
+Content-Type: application/json
+
+{
+  "name": "Una historia del tiempo",
+  "descriptions": "Un libro sobre la física y el cosmos escrito por Stephen Hawking.",
+  "genre": "historia",
+  "platform": "Físico"
+}
+
+###
+DELETE  http://localhost:3000/users/678a0ce3359ad6b0534f888c HTTP/1.1

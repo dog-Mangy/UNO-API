@@ -1,5 +1,5 @@
 import express from 'express';
-import { post, getAll, get, deleteGame, updateGame } from '../controllers/book.js';
+import { post, getAll, get, deleted, update } from '../controllers/game.js';
 import { errorHandler } from '../middlewares/errorHandler.js';
 
 
@@ -11,9 +11,9 @@ gameRouter.get('/', getAll);
 gameRouter.get('/:id', get);
 
 
-gameRouter.put('/:id', updateGame);
-gameRouter.patch('/:id', updateGame);
+gameRouter.put('/:id', update);
+gameRouter.patch('/:id', update);
 
-gameRouter.delete('/:id', deleteGame);
+gameRouter.delete('/:id', deleted);
 
 gameRouter.use(errorHandler);
