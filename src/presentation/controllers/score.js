@@ -1,3 +1,4 @@
+import { Game } from "../../data/models/gameModel.js";
 import { Score } from "../../data/models/scoreModel.js";
 import { ValidationError, NotFoundError } from "../../utils/customErrors.js";
 
@@ -51,6 +52,43 @@ export const get = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const getScores = async (req, res, next) => {
+    try {
+        const { game_id } = req.params; 
+
+        if (!game_id) {
+            return res.status(400).json({ error: "El game_id es requerido" });
+        }
+
+        const game = await Game.findById(game_id);
+        if (!game) {
+            return res.status(404).json({ error: "Juego no encontrado" });
+        }
+
+        const scores = await Score.find({ gameId: game_id }).populate("playerId", "name");
+
+        if (scores.length === 0) {
+            return res.status(400).json({ error: "No hay puntuaciones registradas" });
+        }
+
+        const scoresFormatted = {};
+        scores.forEach(score => {
+            scoresFormatted[score.playerId.name] = score.score;
+        });
+
+        res.json({
+            game_id,
+            scores: scoresFormatted
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 export const update = async (req, res, next) => {
     try {

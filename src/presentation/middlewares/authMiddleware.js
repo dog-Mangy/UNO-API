@@ -1,22 +1,26 @@
-import express from 'express';
-import { userRouter } from '../routes/user.js';
-import { gameRouter } from '../routes/game.js';
-import { cardRouter } from '../routes/card.js';
-import { scoreRouter } from '../routes/score.js';
-import { menuRouter } from '../routes/menu.js';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { tokenBlacklist } from "../controllers/auth.js";
 
+dotenv.config();
 
+export const authenticateJWT = (req, res, next) => {
+    const token = req.header("Authorization")?.split(" ")[1];
 
+    if (!token) {
+        return res.status(401).json({ message: "Acceso denegado: No hay token" });
+    }
 
-const app = express();
+    // 🔴 Verificar si el token está en la lista negra
+    if (tokenBlacklist.has(token)) {
+        return res.status(401).json({ message: "Token inválido o expirado" });
+    }
 
-// Configurar middlewares
-app.use(express.json());
-app.use('/users', userRouter);
-app.use('/games', gameRouter);
-app.use('/cards', cardRouter);
-app.use('/scores', scoreRouter);
-app.use('/', menuRouter);
-
-// Exportar la aplicación configurada
-export default app;
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(403).json({ message: "Token no válido" });
+    }
+};

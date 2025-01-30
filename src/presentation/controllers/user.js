@@ -1,27 +1,22 @@
+import UserService from "../../business/services/userService.js";
 import { Player } from "../../data/models/userModel.js";
 import { ValidationError, NotFoundError } from "../../utils/customErrors.js";
 
 export const post = async (req, res, next) => {
     try {
-        const { name, age, email} = req.body;
-
-        if (!name || !age || !email) {
-            return next(new ValidationError("Todos los campos son obligatorios"));
-        }
-
-        const newPlayer = new Player({
-            name,
-            age,
-            email,
-        });
-
-        await newPlayer.save();
-
-        res.status(201).json(newPlayer);
+      const { name, age, email, password } = req.body;
+  
+      if (!name || !age || !email || !password) {
+        return next(new ValidationError("Todos los campos son obligatorios"));
+      }
+  
+      const result = await UserService.registerUser({ name, age, email, password });
+  
+      res.status(201).json(result);
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
 
 export const getAll = async (req, res, next) => {
     try {

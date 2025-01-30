@@ -1,5 +1,9 @@
+import app from "./app.js";
 import { connectDB } from "./config/database.js";
-import app from "./presentation/middlewares/authMiddleware.js";
+
+import dotenv from "dotenv";
+dotenv.config();
+
 
 
 connectDB(); 

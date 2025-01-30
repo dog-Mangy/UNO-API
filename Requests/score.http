@@ -3,8 +3,8 @@ POST http://localhost:3000/scores HTTP/1.1
 Content-Type: application/json
 
 {
-    "playerId": "678ad42c3a28a633d16c57f3",
-    "gameId": "678ad5ec112c1d209ee0d510",
+    "playerId": "679ae3629e1e6e681351f039",
+    "gameId": "679ad00d96a34c85a900c0c0",
     "score": 322
 }
 
@@ -13,6 +13,10 @@ GET http://localhost:3000/scores HTTP/1.1
 
 ###
 GET http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
+
+###
+GET http://localhost:3000/scores/ScoresPlayers/679ad00d96a34c85a900c0c0
+
 
 ###
 PUT http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
@@ -35,4 +39,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
+DELETE http://localhost:3000/scores/679984abda679e6efa3e70bb HTTP/1.1

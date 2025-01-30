@@ -3,16 +3,28 @@ POST http://localhost:3000/cards HTTP/1.1
 Content-Type: application/json
 
 {
-    "color": "blue",
+    "color": "red",
     "value": "4",
+    "playerId": "679abacdcf080975c039c303",
     "gameId": "678ad5ec112c1d209ee0d510"
 }
+
+###
+POST http://localhost:3000/cards/getLastCard
+Content-Type: application/json
+
+{
+    "game_id": "678ad5ec112c1d209ee0d510"
+}
+
 
 ###
 GET http://localhost:3000/cards HTTP/1.1
 
 ###
 GET http://localhost:3000/cards/6790589b9d5e76e50c1a620c HTTP/1.1
+
+
 
 ###
 PUT http://localhost:3000/cards/6790589b9d5e76e50c1a620c HTTP/1.1
@@ -35,4 +47,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/cards/6790525eff4243e1fe273680 HTTP/1.1
+DELETE http://localhost:3000/cards/679058ba9d5e76e50c1a6211 HTTP/1.1

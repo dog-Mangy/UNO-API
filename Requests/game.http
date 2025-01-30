@@ -3,16 +3,59 @@ POST http://localhost:3000/games HTTP/1.1
 Content-Type: application/json
 
 {
-    "title": "Juego 2",
-    "status": true,
-    "maxPlayers": 4
+    "title": "Juego 3",
+    "status": "pending",
+    "maxPlayers": 4,
+    "creator": "679abacdcf080975c039c303"
 }
+
+###
+POST http://localhost:3000/games/679ad00d96a34c85a900c0c0/join
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFlMzYyOWUxZTZlNjgxMzUxZjAzOSIsImVtYWlsIjoiZGFzb0BnbWFpbC5jb20iLCJpYXQiOjE3MzgyMDQwMTcsImV4cCI6MTczODIwNzYxN30.uIPwcjYxTB9tUkL7g3o39mqG4xPX4DLuG3aGsGHq9Zk
+
+###
+POST http://localhost:3000/games/679ad00d96a34c85a900c0c0/leave
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFlMzYyOWUxZTZlNjgxMzUxZjAzOSIsImVtYWlsIjoiZGFzb0BnbWFpbC5jb20iLCJpYXQiOjE3MzgyMDQwMTcsImV4cCI6MTczODIwNzYxN30.uIPwcjYxTB9tUkL7g3o39mqG4xPX4DLuG3aGsGHq9Zk
+
+###
+POST http://localhost:3000/games/start
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFiYWNkY2YwODA5NzVjMDM5YzMwMyIsImVtYWlsIjoiZWR3aW5AZ21haWwuY29tIiwiaWF0IjoxNzM4MjQ1NjczLCJleHAiOjE3MzgyNDkyNzN9.uhTHjtL7WXWSqS4KHNyFryAQEsDlMluRl-oQ7kWWq7A
+Content-Type: application/json
+
+{
+  "game_id": "679ad00d96a34c85a900c0c0"
+}
+
+###
+POST http://localhost:3000/games/end
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFiYWNkY2YwODA5NzVjMDM5YzMwMyIsImVtYWlsIjoiZWR3aW5AZ21haWwuY29tIiwiaWF0IjoxNzM4MjQ1NjczLCJleHAiOjE3MzgyNDkyNzN9.uhTHjtL7WXWSqS4KHNyFryAQEsDlMluRl-oQ7kWWq7A
+Content-Type: application/json
+
+{
+  "game_id": "679ad00d96a34c85a900c0c0"
+}
+
+
+###
+POST http://localhost:3000/games/current-player
+Content-Type: application/json
+
+{
+  "game_id": "679ad00d96a34c85a900c0c0"
+}
+
 
 ###
 GET http://localhost:3000/games HTTP/1.1
 
 ###
-GET http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+GET http://localhost:3000/games/679ad00d96a34c85a900c0c0 HTTP/1.1
+
+###
+GET http://localhost:3000/games/679ad00d96a34c85a900c0c0/status HTTP/1.1
+
+###
+GET http://localhost:3000/games/679ad00d96a34c85a900c0c0/players HTTP/1.1
 
 ###
 PUT http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
@@ -25,7 +68,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+PATCH http://localhost:3000/games/679aa0c715caa656151538fb HTTP/1.1
 Content-Type: application/json
 
 {
@@ -35,4 +78,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/games/678ad57d112c1d209ee0d508 HTTP/1.1
+DELETE http://localhost:3000/games/679aa3c90e2738f6133e580e HTTP/1.1

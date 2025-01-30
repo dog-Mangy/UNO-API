@@ -12,6 +12,7 @@ const dataSchema = new mongoose.Schema({
             message: 'El correo electrónico no es válido',
         },
     },
+    password: { type: String, required: true },
 }, { timestamps: true });
 
 export const Player = mongoose.connection.models.Users || mongoose.model("Users", dataSchema);

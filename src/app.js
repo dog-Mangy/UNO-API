@@ -1,0 +1,30 @@
+import express from 'express';
+import { gameRouter } from './presentation/routes/game.js';
+import { cardRouter } from './presentation/routes/card.js';
+import { scoreRouter } from './presentation/routes/score.js';
+import { menuRouter } from './presentation/routes/menu.js';
+import { loginRouter } from './presentation/routes/login.js';
+import { userRouter } from './presentation/routes/user.js';
+import { logoutRouter } from './presentation/routes/logOut.js';
+import { profileRouter } from './presentation/routes/profile.js';
+import GameStatusRouter from './presentation/routes/playerGameState.js';
+
+
+
+const app = express();
+
+// Configurar middlewares
+app.use(express.json());
+
+app.use("/auth", loginRouter);
+app.use("/GameStatus", GameStatusRouter);
+app.use("/logOut", logoutRouter);
+app.use("/profile", profileRouter);
+app.use('/users', userRouter);
+app.use('/games', gameRouter);
+app.use('/cards', cardRouter);
+app.use('/scores', scoreRouter);
+app.use('/', menuRouter);
+
+// Exportar la aplicación configurada
+export default app;

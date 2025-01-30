@@ -1,0 +1,8 @@
+###
+POST http://localhost:3000/logOut HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFiYWNkY2YwODA5NzVjMDM5YzMwMyIsImVtYWlsIjoiZWR3aW5AZ21haWwuY29tIiwiaWF0IjoxNzM4MjQzOTMxLCJleHAiOjE3MzgyNDc1MzF9.z6J4RLQw0mZpIrmROBpW8lubfo6d3EyEsy_iPBu_xXo
+
+{
+  "message": "Cierre de sesión"
+}

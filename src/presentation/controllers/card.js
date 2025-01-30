@@ -3,15 +3,16 @@ import { ValidationError, NotFoundError } from "../../utils/customErrors.js";
 
 export const post = async (req, res, next) => {
     try {
-        const { color, value, gameId} = req.body;
+        const { color, value, playerId, gameId} = req.body;
 
-        if (!color || !value || !gameId) {
+        if (!color || !value ||!playerId || !gameId) {
             return next(new ValidationError("Todos los campos son obligatorios"));
         }
 
         const newCard = new Card({
             color,
             value,
+            playerId,
             gameId,
         });
 
@@ -51,6 +52,32 @@ export const get = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getTopDiscardCard = async (req, res, next) => {
+    try {
+        const { game_id } = req.body;
+
+        if (!game_id) {
+            return res.status(400).json({ error: "El game_id es requerido" });
+        }
+
+        const topCard = await Card.findOne({ gameId: game_id })
+                                  .sort({ createdAt: -1 }); 
+
+        if (!topCard) {
+            return res.status(400).json({ error: "No hay cartas en la pila de descartes" });
+        }
+
+        res.json({
+            game_id,
+            top_card: `${topCard.value} of ${topCard.color}`
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 export const update = async (req, res, next) => {
     try {

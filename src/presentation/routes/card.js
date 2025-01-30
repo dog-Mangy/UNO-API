@@ -1,5 +1,5 @@
 import express from 'express';
-import { post, getAll, get, deleted, update } from '../controllers/card.js';
+import { post, getAll, get, deleted, update, getTopDiscardCard } from '../controllers/card.js';
 import { errorHandler } from '../middlewares/errorHandler.js';
 
 
@@ -9,6 +9,8 @@ cardRouter.post('/', post);
 
 cardRouter.get('/', getAll);
 cardRouter.get('/:id', get);
+cardRouter.post('/getLastCard', getTopDiscardCard);
+
 
 
 cardRouter.put('/:id', update);
