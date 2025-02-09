@@ -1,0 +1,30 @@
+{
+    "info": {
+      "name": "Mi API Collection",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Obtener Perfil",
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFiYWNkY2YwODA5NzVjMDM5YzMwMyIsImVtYWlsIjoiZWR3aW5AZ21haWwuY29tIiwiaWF0IjoxNzM4MTkzNjYyLCJleHAiOjE3MzgxOTcyNjJ9.eaDaxz7WFAP1gXJeqLfF9D43vsYmVHU_mTRF09DRFgM",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:3000/profile",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["profile"]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  

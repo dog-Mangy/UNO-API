@@ -1,0 +1,97 @@
+{
+    "info": {
+      "name": "Games API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Crear un juego",
+        "request": {
+          "method": "POST",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": { "mode": "raw", "raw": "{\n    \"title\": \"Juego 3\",\n    \"status\": \"pending\",\n    \"maxPlayers\": 4,\n    \"creator\": \"679abacdcf080975c039c303\"\n}" },
+          "url": { "raw": "http://localhost:3000/games", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games"] }
+        }
+      },
+      {
+        "name": "Unirse a un juego",
+        "request": {
+          "method": "POST",
+          "header": [{ "key": "Authorization", "value": "Bearer TU_TOKEN" }],
+          "url": { "raw": "http://localhost:3000/games/679ad00d96a34c85a900c0c0/join", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "679ad00d96a34c85a900c0c0", "join"] }
+        }
+      },
+      {
+        "name": "Salir de un juego",
+        "request": {
+          "method": "POST",
+          "header": [{ "key": "Authorization", "value": "Bearer TU_TOKEN" }],
+          "url": { "raw": "http://localhost:3000/games/679ad00d96a34c85a900c0c0/leave", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "679ad00d96a34c85a900c0c0", "leave"] }
+        }
+      },
+      {
+        "name": "Iniciar un juego",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer TU_TOKEN" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"game_id\": \"679ad00d96a34c85a900c0c0\"\n}" },
+          "url": { "raw": "http://localhost:3000/games/start", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "start"] }
+        }
+      },
+      {
+        "name": "Finalizar un juego",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer TU_TOKEN" }
+          ],
+          "body": { "mode": "raw", "raw": "{\n  \"game_id\": \"679ad00d96a34c85a900c0c0\"\n}" },
+          "url": { "raw": "http://localhost:3000/games/end", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "end"] }
+        }
+      },
+      {
+        "name": "Obtener juegos",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/games", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games"] }
+        }
+      },
+      {
+        "name": "Obtener un juego por ID",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/games/679ad00d96a34c85a900c0c0", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "679ad00d96a34c85a900c0c0"] }
+        }
+      },
+      {
+        "name": "Actualizar un juego (PUT)",
+        "request": {
+          "method": "PUT",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": { "mode": "raw", "raw": "{\n  \"title\": \"juego 10\",\n  \"status\": true,\n  \"maxPlayers\": 2\n}" },
+          "url": { "raw": "http://localhost:3000/games/678ad57d112c1d209ee0d508", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "678ad57d112c1d209ee0d508"] }
+        }
+      },
+      {
+        "name": "Actualizar un juego (PATCH)",
+        "request": {
+          "method": "PATCH",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": { "mode": "raw", "raw": "{\n  \"title\": \"juego 11\",\n  \"status\": true,\n  \"maxPlayers\": 2\n}" },
+          "url": { "raw": "http://localhost:3000/games/679aa0c715caa656151538fb", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "679aa0c715caa656151538fb"] }
+        }
+      },
+      {
+        "name": "Eliminar un juego",
+        "request": {
+          "method": "DELETE",
+          "url": { "raw": "http://localhost:3000/games/679aa3c90e2738f6133e580e", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["games", "679aa3c90e2738f6133e580e"] }
+        }
+      }
+    ]
+  }
+  

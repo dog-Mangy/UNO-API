@@ -1,0 +1,102 @@
+{
+    "info": {
+      "name": "Cards API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Crear una carta",
+        "request": {
+          "method": "POST",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"color\": \"red\",\n  \"value\": \"5\",\n  \"playerId\": \"PLAYER_ID\",\n  \"gameId\": \"GAME_ID\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/cards",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards"]
+          }
+        }
+      },
+      {
+        "name": "Obtener todas las cartas",
+        "request": {
+          "method": "GET",
+          "url": {
+            "raw": "http://localhost:3000/cards",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards"]
+          }
+        }
+      },
+      {
+        "name": "Obtener una carta por ID",
+        "request": {
+          "method": "GET",
+          "url": {
+            "raw": "http://localhost:3000/cards/CARD_ID",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards", "CARD_ID"]
+          }
+        }
+      },
+      {
+        "name": "Obtener la carta superior del descarte",
+        "request": {
+          "method": "GET",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"gameId\": \"GAME_ID\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/cards/top-discard",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards", "top-discard"]
+          }
+        }
+      },
+      {
+        "name": "Actualizar una carta",
+        "request": {
+          "method": "PUT",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"color\": \"blue\",\n  \"value\": \"7\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/cards/CARD_ID",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards", "CARD_ID"]
+          }
+        }
+      },
+      {
+        "name": "Eliminar una carta",
+        "request": {
+          "method": "DELETE",
+          "url": {
+            "raw": "http://localhost:3000/cards/CARD_ID",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["cards", "CARD_ID"]
+          }
+        }
+      }
+    ]
+  }
+  

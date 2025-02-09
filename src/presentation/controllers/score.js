@@ -1,23 +1,9 @@
-import { Game } from "../../data/models/gameModel.js";
-import { Score } from "../../data/models/scoreModel.js";
-import { ValidationError, NotFoundError } from "../../utils/customErrors.js";
+import { ScoreService } from "../../business/services/ScoreService.js";
 
 export const post = async (req, res, next) => {
     try {
-        const { playerId, gameId, score} = req.body;
-
-        if (!playerId || !gameId || !score) {
-            return next(new ValidationError("Todos los campos son obligatorios"));
-        }
-
-        const newScore = new Score({
-            playerId,
-            gameId,
-            score,
-        });
-
-        await newScore.save();
-
+        const { playerId, gameId, score } = req.body;
+        const newScore = await ScoreService.createScore(playerId, gameId, score);
         res.status(201).json(newScore);
     } catch (error) {
         next(error);
@@ -26,13 +12,8 @@ export const post = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
     try {
-        const Scores = await Score.find(); 
-
-        if (!Scores || Scores.length === 0) {
-            return next(new NotFoundError("No se encontraron cartas"));
-        }
-
-        res.status(200).json(Scores);
+        const scores = await ScoreService.getAllScores();
+        res.status(200).json(scores);
     } catch (error) {
         next(error);
     }
@@ -41,86 +22,40 @@ export const getAll = async (req, res, next) => {
 export const get = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const getScore = await Score.findById(id);
-
-        if (!getScore) {
-            return next(new NotFoundError("carta no encontrada"));
-        }
-
-        res.status(200).json(getScore);
+        const score = await ScoreService.getScoreById(id);
+        res.status(200).json(score);
     } catch (error) {
         next(error);
     }
 };
-
 
 export const getScores = async (req, res, next) => {
     try {
-        const { game_id } = req.params; 
-
-        if (!game_id) {
-            return res.status(400).json({ error: "El game_id es requerido" });
-        }
-
-        const game = await Game.findById(game_id);
-        if (!game) {
-            return res.status(404).json({ error: "Juego no encontrado" });
-        }
-
-        const scores = await Score.find({ gameId: game_id }).populate("playerId", "name");
-
-        if (scores.length === 0) {
-            return res.status(400).json({ error: "No hay puntuaciones registradas" });
-        }
-
-        const scoresFormatted = {};
-        scores.forEach(score => {
-            scoresFormatted[score.playerId.name] = score.score;
-        });
-
-        res.json({
-            game_id,
-            scores: scoresFormatted
-        });
-
+        const { game_id } = req.params;
+        const scores = await ScoreService.getScoresByGame(game_id);
+        res.status(200).json(scores);
     } catch (error) {
         next(error);
     }
 };
-
-
 
 export const update = async (req, res, next) => {
     try {
         const { id } = req.params;
         const updates = req.body;
-
-        const updatedScore = await Score.findByIdAndUpdate(id, updates, { new: true });
-
-        if (!updatedScore) {
-            return next(new NotFoundError("carta no encontrado"));
-        }
-
-        res.status(200).json({ message: "carta actualizado exitosamente", updatedScore });
+        const updatedScore = await ScoreService.updateScore(id, updates);
+        res.status(200).json({ message: "Puntuación actualizada exitosamente", updatedScore });
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            return next(new ValidationError("Error en los datos de la carta"));
-        }
         next(error);
     }
 };
 
 export const deleted = async (req, res, next) => {
-  try {
-      const { id } = req.params;
-      const deleteScore = await Score.findByIdAndDelete(id);
-
-      if (!deleteScore) {
-          return next(new NotFoundError("carta no encontrado"));
-      }
-
-      res.status(200).json({ message: "carta eliminado exitosamente", deleteScore });
-  } catch (error) {
-      next(error);
-  }
+    try {
+        const { id } = req.params;
+        const deletedScore = await ScoreService.deleteScore(id);
+        res.status(200).json({ message: "Puntuación eliminada exitosamente", deletedScore });
+    } catch (error) {
+        next(error);
+    }
 };

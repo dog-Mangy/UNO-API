@@ -1,0 +1,44 @@
+{
+    "info": {
+      "name": "LogOut API Collection",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Cerrar Sesión",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json",
+              "type": "text"
+            },
+            {
+              "key": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OWFiYWNkY2YwODA5NzVjMDM5YzMwMyIsImVtYWlsIjoiZWR3aW5AZ21haWwuY29tIiwiaWF0IjoxNzM4MjQzOTMxLCJleHAiOjE3MzgyNDc1MzF9.z6J4RLQw0mZpIrmROBpW8lubfo6d3EyEsy_iPBu_xXo",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:3000/logOut",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["logOut"]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  

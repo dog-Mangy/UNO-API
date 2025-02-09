@@ -8,6 +8,7 @@ import { userRouter } from './presentation/routes/user.js';
 import { logoutRouter } from './presentation/routes/logOut.js';
 import { profileRouter } from './presentation/routes/profile.js';
 import GameStatusRouter from './presentation/routes/playerGameState.js';
+import { errorHandler } from './presentation/middlewares/errorHandler.js';
 
 
 
@@ -25,6 +26,9 @@ app.use('/games', gameRouter);
 app.use('/cards', cardRouter);
 app.use('/scores', scoreRouter);
 app.use('/', menuRouter);
+
+app.use(errorHandler); 
+
 
 // Exportar la aplicación configurada
 export default app;
