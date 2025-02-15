@@ -1,73 +1,66 @@
-import { Player } from "../../data/models/userModel.js";
-import bcrypt from "bcrypt";
-import { NotFoundError } from "../../utils/customErrors.js";
+import { NotFoundError, ValidationError } from "../../utils/customErrors.js";
 
 class UserService {
+  constructor(userRepository, userValidator, passwordService, userFactory) {
+    this.userRepository = userRepository;
+    this.userValidator = userValidator;
+    this.passwordService = passwordService;
+    this.userFactory = userFactory;
+  }
 
-  static async registerUser(userData) {
-    const { name, age, email, password } = userData;
+  async registerUser(userData) {
+    this.userValidator.validateRegistration(userData);
+    await this.userValidator.ensureUserDoesNotExist(userData.email, userData.name);
 
-    const existingPlayer = await Player.findOne({
-        $or: [{ email }, { name }]
-    });
+    const newUserData = await this.userFactory.createUser(userData);
+    const newUser = await this.userRepository.createUser(newUserData);
 
-    if (existingPlayer) {
-        if (existingPlayer.email === email) {
-            throw new Error("Email already registered");
-        }
-        if (existingPlayer.name === name) {
-            throw new Error("Username already registered");
-        }
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new Player({
-        name,
-        age,
-        email,
-        password: hashedPassword
-    });
-
-    await newUser.save();
     return { message: "User registered successfully", user: newUser };
   }
 
-    static async authenticateUser({ email, password }) {
-        const user = await Player.findOne({ email });
+  async authenticateUser({ email, password }) {
+    const user = await this.findUserByEmail(email); 
+    await this.passwordService.verify(password, user.password); 
+    return user;
+  }
 
-        if (!user) {
-            return null; 
-        }
+  async findUserByEmail(email) {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    return user;
+  }
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return null; 
-        }
+  async getUserById(id) {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new NotFoundError("User not found");
+    return user;
+  }
 
-        return user;
+  async getAllUsers() {
+    const users = await this.userRepository.findAll();
+    if (!users || users.length === 0) throw new NotFoundError("No players found");
+    return users;
+  }
+
+  async updateUser(id, updates) {
+    if (!updates || Object.keys(updates).length === 0) {
+      throw new ValidationError("You must provide at least one field to update");
     }
 
-    static async getUserById(id) {
-        return await Player.findById(id);
-    }
+    const updatedUser = await this.userRepository.updateById(id, updates);
+    if (!updatedUser) throw new NotFoundError("Player not found");
 
-    static async getAllUsers() {
-        return await Player.find();
-    }
+    return { message: "Player successfully updated", updatedUser };
+  }
 
-    static async updateUser(id, updates) {
-        return await Player.findByIdAndUpdate(id, updates, { new: true });
-    }
+  async deleteUser(id) {
+    const deletedUser = await this.userRepository.deleteById(id);
+    if (!deletedUser) throw new NotFoundError("Player not found");
 
-    static async deleteUser(id) {
-      const deletedPlayer = await Player.findByIdAndDelete(id);
-      if (!deletedPlayer) {
-          throw new NotFoundError("Jugador no encontrado");
-      }
-      return { message: "Jugador eliminado exitosamente", deletePlayer: deletedPlayer };
-    }
-  
+    return { message: "Player successfully eliminated", deletedUser };
+  }
 }
 
 export default UserService;

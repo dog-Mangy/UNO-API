@@ -1,229 +1,210 @@
-import { Game } from "../../data/models/gameModel.js";
-import { Player } from "../../data/models/userModel.js";
-import { PlayerGameState } from "../../data/models/playerGameState.js";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { authenticateUser } from "../../utils/authentificate.js";
+import { GameRepository } from "../../data/repositories/gameRepository.js";
+import { UserRepository } from "../../data/repositories/userRepository.js";
+import { PlayerGameStateRepository } from "../../data/repositories/playerGameStateRepository.js";
+import { NotFoundError, ValidationError, ConflictError, UnauthorizedError } from "../../utils/customErrors.js";
 
 dotenv.config();
 
 export const createGameService = async ({ title, status, maxPlayers, creator }) => {
     if (!title || !status || !maxPlayers || !creator) {
-        return { status: 400, body: { message: "Todos los campos son obligatorios" } };
+        throw new ValidationError("All fields are required");
     }
 
-    const user = await Player.findById(creator);
+    const user = await UserRepository.findById(creator);
     if (!user) {
-        return { status: 404, body: { message: "Jugador no encontrado" } };
+        throw new NotFoundError("Player not found");
     }
 
-    const newGame = new Game({ title, status, maxPlayers, creator });
-    await newGame.save();
-
+    const newGame = await GameRepository.create({ title, status, maxPlayers, creator });
     return { status: 201, body: newGame };
 };
 
 export const joinGameService = async (gameId, userId) => {
-    const game = await Game.findById(gameId);
+    const game = await GameRepository.findById(gameId);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     if (game.players.includes(userId)) {
-        return { status: 400, body: { message: "Ya estás en este juego" } };
+        throw new ConflictError("You are already in this game");
     }
 
     if (game.players.length >= game.maxPlayers) {
-        return { status: 400, body: { message: "El juego ya está lleno" } };
+        throw new ValidationError("The game is already full");
     }
 
-    game.players.push(userId);
-    await game.save();
-
-    return { status: 200, body: { message: "Te has unido al juego", game } };
+    const updatedGame = await GameRepository.addPlayer(gameId, userId);
+    return { status: 200, body: { message: "You have joined the game", updatedGame } };
 };
 
 export const leaveGameService = async (game_id, userId) => {
     if (!game_id || !userId) {
-        return { status: 400, body: { message: "Faltan parámetros obligatorios" } };
+        throw new ValidationError("Missing required parameters");
     }
 
     if (!mongoose.Types.ObjectId.isValid(game_id)) {
-        return { status: 400, body: { message: `ID de juego inválido: ${game_id}` } };
+        throw new ValidationError(`Invalid game ID: ${game_id}`);
     }
 
-    const game = await Game.findById(game_id);
+    const game = await GameRepository.findById(game_id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     if (!game.players.includes(userId)) {
-        return { status: 400, body: { message: "No estás en este juego" } };
+        throw new ConflictError("You are not in this game");
     }
 
-    game.players = game.players.filter(playerId => playerId.toString() !== userId);
-    await game.save();
-
-    return { status: 200, body: { message: "Usuario abandonó el juego exitosamente" } };
+    const updatedGame = await GameRepository.removePlayer(game_id, userId);
+    return { status: 200, body: { message: "User successfully left the game", game: updatedGame } };
 };
 
 export const startGameService = async (game_id, access_token) => {
     if (!game_id || !access_token) {
-        return { status: 400, body: { message: "Faltan parámetros obligatorios" } };
+        throw new ValidationError("Missing required parameters");
     }
 
-    const game = await Game.findById(game_id);
+    const game = await GameRepository.findById(game_id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     const authResult = authenticateUser(access_token);
     if (authResult.status !== 200) {
-        return authResult; 
+        throw new UnauthorizedError("Invalid or expired token");
     }
 
     const userId = authResult.userId;
-
     if (game.creator.toString() !== userId) {
-        return { status: 403, body: { message: "No tienes permisos para iniciar este juego" } };
+        throw new UnauthorizedError("You do not have permission to start this game");
     }
 
-    const playersReadyState = await PlayerGameState.find({ game: game_id });
+    const playersReadyState = await PlayerGameStateRepository.findByGameId(game_id);
     const allReady = playersReadyState.every(player => player.ready);
     if (!allReady) {
-        return { status: 400, body: { message: "No todos los jugadores están listos" } };
+        throw new ValidationError("Not all players are ready");
     }
 
-    game.status = "started";
-    await game.save();
+    const updatedGame = await GameRepository.updateStatus(game_id, "started");
 
-    return { status: 200, body: { message: "Juego iniciado correctamente" } };
+    return { status: 200, body: { message: "Game started successfully" }, updatedGame };
 };
 
 export const endGameService = async (game_id, access_token) => {
     if (!game_id || !access_token) {
-        return { status: 400, body: { message: "Faltan parámetros obligatorios" } };
+        throw new ValidationError("Missing required parameters");
     }
 
-    const game = await Game.findById(game_id);
+    const game = await GameRepository.findById(game_id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     const authResult = authenticateUser(access_token);
     if (authResult.status !== 200) {
-        return authResult; 
+        throw new UnauthorizedError("Invalid or expired token");
     }
 
     const userId = authResult.userId;
-
     if (game.creator.toString() !== userId) {
-        return { status: 403, body: { message: "No tienes permisos para finalizar este juego" } };
+        throw new UnauthorizedError("You do not have permission to end this game");
     }
 
     if (game.status !== "started") {
-        return { status: 400, body: { message: "El juego no está en curso" } };
+        throw new ValidationError("The game is not in progress");
     }
 
-    game.status = "finished";
-    await game.save();
+    const updatedGame = await GameRepository.updateStatus(game_id, "finished");
 
-    return { status: 200, body: { message: "Juego finalizado correctamente" } };
+    return { status: 200, body: { message: "Game ended successfully", game: updatedGame } };
 };
+
 
 export const getCurrentPlayerService = async (game_id) => {
     if (!game_id) {
-        return { status: 400, body: { error: "El game_id es requerido" } };
+        throw new ValidationError("game_id is required");
     }
 
-    const game = await Game.findById(game_id).populate("players", "name");
-
+    const game = await GameRepository.findByIdWithPlayers(game_id);
     if (!game) {
-        return { status: 404, body: { error: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     if (game.status !== "started") {
-        return { status: 400, body: { error: "El juego no está en curso" } };
+        throw new ValidationError("The game is not in progress");
     }
 
     if (game.players.length === 0) {
-        return { status: 400, body: { error: "No hay jugadores en este juego" } };
+        throw new ValidationError("There are no players in this game");
     }
 
     const currentPlayer = game.players[game.turnIndex];
 
     if (!currentPlayer) {
-        return { status: 400, body: { error: "No hay un jugador válido en este turno" } };
+        throw new ValidationError("No valid player in this turn");
     }
 
     return { 
         status: 200, 
-        body: {
-            game_id,
-            current_player: currentPlayer.name
-        }
+        body: { game_id, current_player: currentPlayer.name }
     };
 };
 
 export const getAllGamesService = async () => {
-    const games = await Game.find();
+    const games = await GameRepository.findAll();
     if (!games.length) {
-        return { status: 404, body: { message: "No se encontraron juegos" } };
+        throw new NotFoundError("No games found");
     }
     return { status: 200, body: games };
 };
 
 export const getGameByIdService = async (id) => {
-    const game = await Game.findById(id);
+    const game = await GameRepository.findById(id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
     return { status: 200, body: game };
 };
 
 export const getSatusByIdService = async (id) => {
-    const game = await Game.findById(id);
+    const game = await GameRepository.findById(id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     return { 
         status: 200, 
-        body: { 
-            game_id: game._id, 
-            state: game.status 
-        } 
+        body: { game_id: game._id, state: game.status } 
     };
 };
 
 export const getUserByIdService = async (id) => {
-    const game = await Game.findById(id);
+    const game = await GameRepository.findById(id);
     if (!game) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
 
     return { 
         status: 200, 
-        body: { 
-            game_id: game._id, 
-            players: game.players 
-        } 
+        body: { game_id: game._id, players: game.players } 
     };
 };
 
 export const updateGameService = async (id, updates) => {
-    const updatedGame = await Game.findByIdAndUpdate(id, updates, { new: true });
+    const updatedGame = await GameRepository.updateById(id, updates, { new: true });
     if (!updatedGame) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
-    return { status: 200, body: { message: "Juego actualizado exitosamente", updatedGame } };
+    return { status: 200, body: { message: "Game updated successfully", updatedGame } };
 };
 
 export const deleteGameService = async (id) => {
-    const deletedGame = await Game.findByIdAndDelete(id);
+    const deletedGame = await GameRepository.deleteById(id);
     if (!deletedGame) {
-        return { status: 404, body: { message: "Juego no encontrado" } };
+        throw new NotFoundError("Game not found");
     }
-    return { status: 200, body: { message: "Juego eliminado exitosamente", deletedGame } };
+    return { status: 200, body: { message: "Game deleted successfully", deletedGame } };
 };

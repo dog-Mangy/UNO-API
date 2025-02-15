@@ -7,14 +7,14 @@ import { Player } from "../../src/data/models/userModel.js";
 import { jest } from "@jest/globals";
 
 let mongoServer;
-const TEST_SECRET = "testsecret"; // Clave secreta para los tests
+const TEST_SECRET = "testsecret"; 
 
 beforeAll(async () => {
   jest.setTimeout(500000);
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
 
-  process.env.SECRET_KEY = TEST_SECRET; // Definir clave de prueba
+  process.env.SECRET_KEY = TEST_SECRET;
 },500000);
 
 afterAll(async () => {

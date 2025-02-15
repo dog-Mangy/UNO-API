@@ -15,7 +15,7 @@ GET http://localhost:3000/scores HTTP/1.1
 GET http://localhost:3000/scores/678fab629e95eb8047c7f720 HTTP/1.1
 
 ###
-GET http://localhost:3000/scores/ScoresPlayers/679ad00d96a34c85a900c0c0
+GET http://localhost:3000/scores/ScoresPlayers/
 
 
 ###

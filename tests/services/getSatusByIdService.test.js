@@ -49,17 +49,14 @@ describe("getSatusByIdService", () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("game_id");
         
-        // Comparación segura del ObjectId
         expect(String(response.body.game_id)).toBe(String(game._id));
         expect(response.body).toHaveProperty("state", "started");
     });
     
     it("Debe devolver error 404 si el juego no existe", async () => {
         const fakeGameId = new mongoose.Types.ObjectId();
-
-        const response = await getSatusByIdService(fakeGameId);
-
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Juego no encontrado");
-    });
+    
+        await expect(getSatusByIdService(fakeGameId))
+            .rejects.toThrow("Game not found");
+    });    
 });

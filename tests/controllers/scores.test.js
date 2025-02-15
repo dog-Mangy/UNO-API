@@ -49,7 +49,7 @@ describe("POST /scores", () => {
     const newScore = {
       playerId: player._id.toString(),
       gameId: game._id.toString(),
-      score: 100,
+      baseScore: 100
     };
 
     const response = await request(app).post("/scores").send(newScore);
@@ -68,7 +68,7 @@ describe("POST /scores", () => {
     const response = await request(app).post("/scores").send({});
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "Todos los campos son obligatorios");
+    expect(response.body).toHaveProperty("message", "All fields are required");
   });
 });
 
@@ -77,7 +77,7 @@ describe("GET /scores", () => {
       const response = await request(app).get("/scores");
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "No se encontraron puntuaciones");
+      expect(response.body).toHaveProperty("message", "No scores found");
     });
   
     it("Debe devolver una lista con puntajes", async () => {
@@ -129,32 +129,27 @@ describe("GET /scores", () => {
       const response = await request(app).get(`/scores/${nonExistentId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Puntuación no encontrada");
+      expect(response.body).toHaveProperty("message", "Score not found");
     });
   });
 
   describe("GET /scores/ScoresPlayers/:game_id", () => {
     it("Debe devolver las puntuaciones de un juego", async () => {
-      // Crear un jugador
       const player1 = new Player({ name: "Jugador1", age: 20, email: "jugador1@example.com", password: "password123" });
       const player2 = new Player({ name: "Jugador2", age: 22, email: "jugador2@example.com", password: "password123" });
       await player1.save();
       await player2.save();
   
-      // Crear un juego
       const game = new Game({ title: "Juego de prueba", status: "pending", maxPlayers: 4, creator: player1._id });
       await game.save();
   
-      // Crear puntuaciones
       const score1 = new Score({ playerId: player1._id, gameId: game._id, score: 150 });
       const score2 = new Score({ playerId: player2._id, gameId: game._id, score: 200 });
       await score1.save();
       await score2.save();
   
-      // Hacer la petición GET
       const response = await request(app).get(`/scores/ScoresPlayers/${game._id}`);
   
-      // Verificar respuesta
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("gameId", game._id.toString());
       expect(response.body.scores).toEqual({
@@ -166,7 +161,7 @@ describe("GET /scores", () => {
     it("Debe devolver error 400 si no se proporciona game_id", async () => {
       const response = await request(app).get("/scores/ScoresPlayers/");
   
-      expect(response.status).toBe(500); // Porque la ruta no está bien formada
+      expect(response.status).toBe(500); 
     });
   
     it("Debe devolver error 404 si el juego no existe", async () => {
@@ -174,11 +169,10 @@ describe("GET /scores", () => {
       const response = await request(app).get(`/scores/ScoresPlayers/${nonExistentGameId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toMatchObject({ error: true, message: "Juego no encontrado" });
+      expect(response.body).toMatchObject({ error: true, message: "Game not found" });
     });
   
     it("Debe devolver error 400 si no hay puntuaciones registradas", async () => {
-      // Crear un juego sin puntuaciones
       const game = new Game({ title: "Juego sin puntajes", status: "pending", maxPlayers: 4, creator: new mongoose.Types.ObjectId() });
       await game.save();
   
@@ -187,7 +181,7 @@ describe("GET /scores", () => {
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject({
         error: true,
-        message: "No hay puntuaciones registradas"
+        message: "No scores registered"
       });
     
 
@@ -199,13 +193,12 @@ describe("GET /scores", () => {
     let score;
 
     beforeEach(async () => {
-        // Crear un puntaje de prueba antes de cada test
         score = new Score({ playerId: new mongoose.Types.ObjectId(), gameId: new mongoose.Types.ObjectId(), score: 100 });
         await score.save();
     });
 
     afterEach(async () => {
-        await Score.deleteMany(); // Limpiar la base de datos después de cada test
+        await Score.deleteMany(); 
     });
 
     it("Debe actualizar correctamente una puntuacion y devolver 200", async () => {
@@ -214,7 +207,7 @@ describe("GET /scores", () => {
             .send({ score: 150 })
             .expect(200);
 
-        expect(response.body).toHaveProperty("message", "Puntuación actualizada exitosamente");
+        expect(response.body).toHaveProperty("message", "Score updated successfully");
         expect(response.body.updatedScore).toHaveProperty("score", 150);
     });
 
@@ -225,7 +218,7 @@ describe("GET /scores", () => {
             .send({ score: 200 })
             .expect(404);
 
-            expect(response.body).toMatchObject({ error: true, message: "Puntuación no encontrada" });
+            expect(response.body).toMatchObject({ error: true, message: "Score not found" });
 
           });
 });
@@ -235,7 +228,6 @@ describe("DELETE /scores/:id", () => {
   let player1, game, score;
 
   beforeEach(async () => {
-      // Crear un jugador
       player1 = await Player.create({
           name: "Jugador1",
           age: 20,
@@ -243,7 +235,6 @@ describe("DELETE /scores/:id", () => {
           password: "password123"
       });
 
-      // Crear un juego
       game = await Game.create({
           title: "Juego de prueba",
           status: "pending",
@@ -251,7 +242,6 @@ describe("DELETE /scores/:id", () => {
           creator: player1._id
       });
 
-      // Crear una puntuación
       score = await Score.create({
           playerId: player1._id,
           gameId: game._id,
@@ -268,12 +258,11 @@ describe("DELETE /scores/:id", () => {
           .delete(`/scores/${score._id}`)
           .expect(200);
 
-      expect(response.body).toHaveProperty("message", "Puntuación eliminada exitosamente");
+      expect(response.body).toHaveProperty("message", "Score eliminated successfully");
       expect(response.body).toHaveProperty("deletedScore");
       expect(response.body.deletedScore._id).toBe(score._id.toString());
 
 
-      // Verificar que la puntuación realmente se eliminó
       const scoreInDb = await Score.findById(score._id);
       expect(scoreInDb).toBeNull();
   });
@@ -285,6 +274,6 @@ describe("DELETE /scores/:id", () => {
         .delete(`/scores/${fakeId}`)
         .expect(404);
 
-    expect(response.body).toMatchObject({error: true, message: "Puntuación no encontrada"});
+    expect(response.body).toMatchObject({error: true, message: "Score not found"});
 });
 });

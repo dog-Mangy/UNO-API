@@ -1,7 +1,6 @@
-
-import { Game } from "../../data/models/gameModel.js";
-import { PlayerGameState } from "../../data/models/playerGameState.js";
-import { Player } from "../../data/models/userModel.js";
+import { PlayerGameStateRepository } from "../../data/repositories/playerGameStateRepository.js";
+import { GameRepository } from "../../data/repositories/gameRepository.js";
+import { UserRepository } from "../../data/repositories/userRepository.js";
 import { ValidationError, NotFoundError } from "../../utils/customErrors.js";
 
 export class PlayerGameStateService {
@@ -10,26 +9,18 @@ export class PlayerGameStateService {
             throw new ValidationError("Faltan parámetros obligatorios");
         }
 
-        const game = await Game.findById(gameId);
+        const game = await GameRepository.findById(gameId);
         if (!game) {
             throw new NotFoundError("Juego no encontrado");
         }
 
-        const user = await Player.findById(userId);
+        const user = await UserRepository.findById(userId);
         if (!user) {
             throw new NotFoundError("Jugador no encontrado");
         }
 
-        let playerState = await PlayerGameState.findOne({ user: userId, game: gameId });
+        const updatedState = await PlayerGameStateRepository.updateReadyState(userId, gameId, ready);
 
-        if (!playerState) {
-            playerState = new PlayerGameState({ user: userId, game: gameId, ready });
-        } else {
-            playerState.ready = ready;
-        }
-
-        await playerState.save();
-
-        return { message: "Estado actualizado correctamente", playerState };
+        return { message: "Estado actualizado correctamente", playerState: updatedState };
     }
 }

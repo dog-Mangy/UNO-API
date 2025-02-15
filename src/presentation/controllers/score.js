@@ -1,10 +1,14 @@
-import { ScoreService } from "../../business/services/ScoreService.js";
+import { BonusScoreStrategy } from "../../business/services/score/BonusScoreStrategy.js";
+import { ScoreService } from "../../business/services/score/ScoreService.js";
+
+const scoreService = new ScoreService(new BonusScoreStrategy());
+
 
 export const post = async (req, res, next) => {
     try {
-        const { playerId, gameId, score } = req.body;
-        const newScore = await ScoreService.createScore(playerId, gameId, score);
-        res.status(201).json(newScore);
+        const { playerId, gameId, baseScore  } = req.body;
+        const newScore = await scoreService.createScore(playerId, gameId, { baseScore });
+        res.status(201).json(newScore); 
     } catch (error) {
         next(error);
     }
@@ -44,7 +48,7 @@ export const update = async (req, res, next) => {
         const { id } = req.params;
         const updates = req.body;
         const updatedScore = await ScoreService.updateScore(id, updates);
-        res.status(200).json({ message: "Puntuación actualizada exitosamente", updatedScore });
+        res.status(200).json({ message: "Score updated successfully", updatedScore });
     } catch (error) {
         next(error);
     }
@@ -54,7 +58,7 @@ export const deleted = async (req, res, next) => {
     try {
         const { id } = req.params;
         const deletedScore = await ScoreService.deleteScore(id);
-        res.status(200).json({ message: "Puntuación eliminada exitosamente", deletedScore });
+        res.status(200).json({ message: "Score eliminated successfully", deletedScore });
     } catch (error) {
         next(error);
     }

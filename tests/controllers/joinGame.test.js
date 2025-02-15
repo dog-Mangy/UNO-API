@@ -65,8 +65,8 @@ describe("POST /game/:gameId/join", () => {
       .post(`/games/${game._id}/join`)
       .set("Authorization", `Bearer ${userToken}`);
   
-    expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "Ya estás en este juego");
+    expect(response.status).toBe(409);
+    expect(response.body).toHaveProperty("message", "You are already in this game");
   });
   
 
@@ -94,7 +94,7 @@ describe("POST /game/:gameId/join", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "El juego ya está lleno");
+    expect(response.body).toHaveProperty("message", "The game is already full");
   });
 
   it("Debe permitir unirse al juego si todo es válido", async () => {
@@ -117,9 +117,8 @@ describe("POST /game/:gameId/join", () => {
       .set("Authorization", `Bearer ${userToken}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Te has unido al juego");
+    expect(response.body).toHaveProperty("message", "You have joined the game");
 
-    // Verificar que el usuario se agregó al juego en la BD
     const updatedGame = await Game.findById(game._id);
     expect(updatedGame.players).toContainEqual(user._id);
   });

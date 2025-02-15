@@ -16,7 +16,7 @@ beforeAll(async () => {
     jest.setTimeout(500000);
     mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri());
-},500000);
+}, 500000);
 
 afterAll(async () => {
     await mongoose.disconnect();
@@ -33,11 +33,11 @@ beforeEach(async () => {
 
 describe("leaveGameService", () => {
     it("Debe permitir que el jugador abandone el juego correctamente", async () => {
-        const player = new Player({ name: "Jugador1", age:22, email: "jugador1@example.com", password: "password" });
+        const player = new Player({ name: "Jugador1", age: 22, email: "jugador1@example.com", password: "password" });
         await player.save();
 
-        const player2 = new Player({ name: "Jugador2", age:22, email: "jugador2@example.com", password: "password" });
-        await player.save();
+        const player2 = new Player({ name: "Jugador2", age: 22, email: "jugador2@example.com", password: "password" });
+        await player2.save();  
 
         const game = new Game({ title: "UNO", status: "started", maxPlayers: 4, creator: player._id, players: [player2._id] });
         await game.save();
@@ -49,11 +49,10 @@ describe("leaveGameService", () => {
         const response = await leaveGameService(game._id, player2._id);
 
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "Usuario abandonó el juego exitosamente");
+        expect(response.body).toHaveProperty("message", "User successfully left the game");
 
-        // Verificar que el jugador ya no está en el juego
         const updatedGame = await Game.findById(game._id);
-        expect(updatedGame.players).not.toContain(player._id);
+        expect(updatedGame.players).not.toContain(player2._id);  
     });
 
     it("Debe devolver error 400 si el jugador no está en el juego", async () => {
@@ -63,28 +62,22 @@ describe("leaveGameService", () => {
         const game = new Game({ title: "UNO", status: "started", maxPlayers: 4, creator: player._id, players: [] });
         await game.save();
 
-        const response = await leaveGameService(game._id, player._id);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "No estás en este juego");
+        await expect(leaveGameService(game._id, player._id))
+            .rejects.toThrow("You are not in this game"); 
     });
 
     it("Debe devolver error 404 si el juego no existe", async () => {
-        const player = new Player({ name: "Jugador1", age:22 , email: "jugador1@example.com", password: "password" });
+        const player = new Player({ name: "Jugador1", age: 22, email: "jugador1@example.com", password: "password" });
         await player.save();
 
         const fakeGameId = new mongoose.Types.ObjectId();
 
-        const response = await leaveGameService(fakeGameId, player._id);
-
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Juego no encontrado");
+        await expect(leaveGameService(fakeGameId, player._id))
+            .rejects.toThrow("Game not found");  
     });
 
     it("Debe devolver error 400 si faltan parámetros", async () => {
-        const response = await leaveGameService(null, null);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "Faltan parámetros obligatorios");
+        await expect(leaveGameService(null, null))
+            .rejects.toThrow("Missing required parameters");  
     });
 });

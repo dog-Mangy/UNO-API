@@ -16,7 +16,7 @@ beforeAll(async () => {
     jest.setTimeout(500000);
     mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri());
-},500000);
+}, 500000);
 
 afterAll(async () => {
     await mongoose.disconnect();
@@ -39,28 +39,23 @@ describe("startGameService", () => {
         const game = new Game({ title: "UNO", status: "pending", maxPlayers: 4, creator: creator._id });
         await game.save();
 
-        // Agregar jugadores al juego
-        const player1 = new Player({ name: "Jugador 1", age:22, email: "player1@example.com", password: "password" });
-        const player2 = new Player({ name: "Jugador 2", age:23, email: "player2@example.com", password: "password" });
+        const player1 = new Player({ name: "Jugador 1", age: 22, email: "player1@example.com", password: "password" });
+        const player2 = new Player({ name: "Jugador 2", age: 23, email: "player2@example.com", password: "password" });
         await player1.save();
         await player2.save();
 
-        // Estado de jugadores (todos listos)
         await PlayerGameState.create([
             { user: player1._id, game: game._id, ready: true },
             { user: player2._id, game: game._id, ready: true }
         ]);
 
-        // Generar token del creador
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
-        // Llamar al servicio
         const response = await startGameService(game._id, token);
 
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "Juego iniciado correctamente");
+        expect(response.body).toHaveProperty("message", "Game started successfully");
 
-        // Verificar que el estado del juego cambió a "started"
         const updatedGame = await Game.findById(game._id);
         expect(updatedGame.status).toBe("started");
     });
@@ -79,10 +74,8 @@ describe("startGameService", () => {
 
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
-        const response = await startGameService(game._id, token);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "No todos los jugadores están listos");
+        await expect(startGameService(game._id, token))
+            .rejects.toThrow("Not all players are ready"); 
     });
 
     it("Debe devolver error 403 si un usuario no creador intenta iniciar el juego", async () => {
@@ -99,30 +92,24 @@ describe("startGameService", () => {
 
         const token = jwt.sign({ id: player1._id.toString(), email: player1.email }, process.env.SECRET_KEY);
 
-        const response = await startGameService(game._id, token);
-
-        expect(response.status).toBe(403);
-        expect(response.body).toHaveProperty("message", "No tienes permisos para iniciar este juego");
+        await expect(startGameService(game._id, token))
+            .rejects.toThrow("You do not have permission to start this game");
     });
 
     it("Debe devolver error 404 si el juego no existe", async () => {
-        const creator = new Player({ name: "Creador", age:22, email: "creador@example.com", password: "password" });
+        const creator = new Player({ name: "Creador", age: 22, email: "creador@example.com", password: "password" });
         await creator.save();
 
         const fakeGameId = new mongoose.Types.ObjectId();
 
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
-        const response = await startGameService(fakeGameId, token);
-
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Juego no encontrado");
+        await expect(startGameService(fakeGameId, token))
+            .rejects.toThrow("Game not found"); 
     });
 
     it("Debe devolver error 400 si faltan parámetros", async () => {
-        const response = await startGameService(null, null);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "Faltan parámetros obligatorios");
+        await expect(startGameService(null, null))
+            .rejects.toThrow("Missing required parameters");  
     });
 });

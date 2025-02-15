@@ -4,7 +4,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import jwt from "jsonwebtoken";
 import app from "../../src/app.js";
 import { jest } from "@jest/globals";
-import { tokenBlacklist } from "../../src/presentation/controllers/auth.js";
+import { tokenBlacklistService } from "../../src/business/services/tokenBlacklistService.js";
 
 let mongoServer;
 const TEST_SECRET = "testsecret";
@@ -15,7 +15,7 @@ beforeAll(async () => {
   await mongoose.connect(mongoServer.getUri());
 
   process.env.SECRET_KEY = TEST_SECRET;
-},500000);
+}, 500000);
 
 afterAll(async () => {
   await mongoose.disconnect();
@@ -25,7 +25,7 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  tokenBlacklist.clear(); // Limpiar la blacklist antes de cada prueba
+  tokenBlacklistService.blacklist.clear();
 });
 
 describe("POST /logout", () => {
@@ -45,19 +45,15 @@ describe("POST /logout", () => {
   });
 
   it("Debe cerrar sesión correctamente y agregar el token a la blacklist", async () => {
-    // Crear un token válido
     const validToken = jwt.sign({ id: "12345", email: "test@example.com" }, TEST_SECRET, { expiresIn: "1h" });
 
-    // Hacer la petición de logout con el token
     const response = await request(app)
       .post("/logout")
       .set("Authorization", `Bearer ${validToken}`);
 
-    // Verificar respuesta
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Cierre de sesión exitoso");
+    expect(response.body).toHaveProperty("message", "Logout successful");
 
-    // Verificar que el token está en la blacklist
-    expect(tokenBlacklist.has(validToken)).toBe(true);
+    expect(tokenBlacklistService.has(validToken)).toBe(true); 
   });
 });

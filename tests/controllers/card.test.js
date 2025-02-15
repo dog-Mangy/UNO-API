@@ -31,14 +31,12 @@ beforeEach(async () => {
 
 describe("POST /cards", () => {
   it("Debe crear una carta correctamente", async () => {
-    // Crear un jugador y un juego
     const player = new Player({ name: "Jugador1", age: 20, email: "jugador1@example.com", password: "password123" });
     await player.save();
 
     const game = new Game({ title: "Juego de prueba", status: "pending", maxPlayers: 4, creator: player._id });
     await game.save();
 
-    // Datos de la carta
     const newCard = {
       color: "red",
       value: "5",
@@ -46,10 +44,8 @@ describe("POST /cards", () => {
       gameId: game._id.toString(),
     };
 
-    // Hacer la petición POST
     const response = await request(app).post("/cards").send(newCard);
 
-    // Verificar respuesta
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("_id");
     expect(response.body).toHaveProperty("color", "red");
@@ -57,7 +53,6 @@ describe("POST /cards", () => {
     expect(response.body).toHaveProperty("playerId", player._id.toString());
     expect(response.body).toHaveProperty("gameId", game._id.toString());
 
-    // Verificar que la carta se guardó en la BD
     const cardInDb = await Card.findById(response.body._id);
     expect(cardInDb).not.toBeNull();
   });
@@ -69,7 +64,7 @@ describe("POST /cards", () => {
     });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "Todos los campos son obligatorios");
+    expect(response.body).toHaveProperty("message", "All fields are required");
   });
 });
 
@@ -79,7 +74,7 @@ describe("GET /cards", () => {
       const response = await request(app).get("/cards");
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "No se encontraron cartas");
+      expect(response.body).toHaveProperty("message", "No cards found");
     });
   
     it("Debe devolver una lista de cartas si existen en la base de datos", async () => {
@@ -130,7 +125,7 @@ describe("GET /cards", () => {
       const response = await request(app).get(`/cards/${nonExistentId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Carta no encontrada");
+      expect(response.body).toHaveProperty("message", "Card not found");
     });
   });
   
@@ -151,12 +146,11 @@ describe("GET /cards", () => {
       const response = await request(app).put(`/cards/${card._id}`).send(updatedData);
   
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("message", "Carta actualizada exitosamente");
+      expect(response.body).toHaveProperty("message", "Card updated successfully");
       expect(response.body.updatedCard).toHaveProperty("_id", card._id.toString());
       expect(response.body.updatedCard).toHaveProperty("color", "blue");
       expect(response.body.updatedCard).toHaveProperty("value", "10");
   
-      // Verificar en la base de datos que los datos fueron actualizados
       const updatedCardInDb = await Card.findById(card._id);
       expect(updatedCardInDb.color).toBe("blue");
       expect(updatedCardInDb.value).toBe("10");
@@ -168,7 +162,7 @@ describe("GET /cards", () => {
       const response = await request(app).put(`/cards/${nonExistentId}`).send({ color: "yellow", value: "3" });
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Carta no encontrada");
+      expect(response.body).toHaveProperty("message", "Card not found");
     });
   
     it("Debe devolver error 400 si los datos enviados son inválidos", async () => {
@@ -181,12 +175,12 @@ describe("GET /cards", () => {
       const card = new Card({ color: "red", value: "5", playerId: player._id, gameId: game._id });
       await card.save();
   
-      const invalidUpdate = { color: "", value: null }; // Datos inválidos
+      const invalidUpdate = { color: "", value: null }; 
   
       const response = await request(app).put(`/cards/${card._id}`).send(invalidUpdate);
   
       expect(response.status).toBe(400);
-      expect(response.body).toHaveProperty("message", "Error en los datos de la carta");
+      expect(response.body).toHaveProperty("message", "Card data error");
     });
   });
 
@@ -209,7 +203,7 @@ describe("GET /cards", () => {
       const response = await request(app).delete(`/cards/${card._id}`);
   
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("message", "Carta eliminada exitosamente");
+      expect(response.body).toHaveProperty("message", "Card deleted successfully");
   
       const deletedCard = await Card.findById(card._id);
       expect(deletedCard).toBeNull();
@@ -220,6 +214,6 @@ describe("GET /cards", () => {
       const response = await request(app).delete(`/cards/${nonExistentId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Carta no encontrada");
+      expect(response.body).toHaveProperty("message", "Card not found");
     });
   });

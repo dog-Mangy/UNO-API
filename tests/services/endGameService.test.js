@@ -8,8 +8,6 @@ import { endGameService } from "../../src/business/services/gameService.js";
 import { jest } from "@jest/globals";
 
 
-
-
 dotenv.config();
 
 let mongoServer;
@@ -34,7 +32,7 @@ beforeEach(async () => {
 
 describe("endGameService", () => {
     it("Debe permitir que el creador finalice el juego correctamente", async () => {
-        const creator = new Player({ name: "Creador",age: 22, email: "creador@example.com", password: "password" });
+        const creator = new Player({ name: "Creador", age: 22, email: "creador@example.com", password: "password" });
         await creator.save();
 
         const game = new Game({ title: "UNO", status: "started", maxPlayers: 4, creator: creator._id });
@@ -45,16 +43,15 @@ describe("endGameService", () => {
         const response = await endGameService(game._id, token);
 
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "Juego finalizado correctamente");
+        expect(response.body).toHaveProperty("message", "Game ended successfully");
 
-        // Verificar que el estado del juego es "finished"
         const updatedGame = await Game.findById(game._id);
         expect(updatedGame.status).toBe("finished");
     });
 
     it("Debe devolver error 403 si un usuario que no es el creador intenta finalizar el juego", async () => {
-        const creator = new Player({ name: "Creador",age: 22, email: "creador@example.com", password: "password" });
-        const otherUser = new Player({ name: "Jugador",age: 22, email: "jugador@example.com", password: "password" });
+        const creator = new Player({ name: "Creador", age: 22, email: "creador@example.com", password: "password" });
+        const otherUser = new Player({ name: "Jugador", age: 22, email: "jugador@example.com", password: "password" });
 
         await creator.save();
         await otherUser.save();
@@ -64,27 +61,23 @@ describe("endGameService", () => {
 
         const token = jwt.sign({ id: otherUser._id.toString(), email: otherUser.email }, process.env.SECRET_KEY);
 
-        const response = await endGameService(game._id, token);
-
-        expect(response.status).toBe(403);
-        expect(response.body).toHaveProperty("message", "No tienes permisos para finalizar este juego");
+        await expect(endGameService(game._id, token))
+            .rejects.toThrow("You do not have permission to end this game");
     });
 
     it("Debe devolver error 404 si el juego no existe", async () => {
-        const creator = new Player({ name: "Creador",age: 22, email: "creador@example.com", password: "password" });
+        const creator = new Player({ name: "Creador", age: 22, email: "creador@example.com", password: "password" });
         await creator.save();
 
         const fakeGameId = new mongoose.Types.ObjectId();
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
-        const response = await endGameService(fakeGameId, token);
-
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Juego no encontrado");
+        await expect(endGameService(fakeGameId, token))
+            .rejects.toThrow("Game not found");
     });
 
     it("Debe devolver error 400 si el juego ya está finalizado", async () => {
-        const creator = new Player({ name: "Creador", age:22, email: "creador@example.com", password: "password" });
+        const creator = new Player({ name: "Creador", age: 22, email: "creador@example.com", password: "password" });
         await creator.save();
 
         const game = new Game({ title: "UNO", status: "finished", maxPlayers: 4, creator: creator._id });
@@ -92,16 +85,12 @@ describe("endGameService", () => {
 
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
-        const response = await endGameService(game._id, token);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "El juego no está en curso");
+        await expect(endGameService(game._id, token))
+            .rejects.toThrow("The game is not in progress");
     });
 
     it("Debe devolver error 400 si faltan parámetros", async () => {
-        const response = await endGameService(null, null);
-
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("message", "Faltan parámetros obligatorios");
+        await expect(endGameService(null, null))
+            .rejects.toThrow("Missing required parameters");
     });
 });

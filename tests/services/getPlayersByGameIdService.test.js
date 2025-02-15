@@ -56,9 +56,8 @@ describe("getUserByIdService", () => {
 
     it("Debe devolver error 404 si el juego no existe", async () => {
         const invalidGameId = new mongoose.Types.ObjectId();
-        const response = await getUserByIdService(invalidGameId);
-
-        expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty("message", "Juego no encontrado");
+    
+        await expect(getUserByIdService(invalidGameId))
+            .rejects.toThrow("Game not found");
     });
 });

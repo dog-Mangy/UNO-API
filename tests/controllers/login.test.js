@@ -1,10 +1,10 @@
 import request from "supertest";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import app from "../../src/app.js";
-import { Player } from "../../src/data/models/userModel.js";
 import { jest } from "@jest/globals";
 import bcrypt from "bcrypt";
+import app from "../../src/app.js";
+import { Player } from "../../src/data/models/userModel.js";
 
 let mongoServer;
 
@@ -27,7 +27,6 @@ beforeEach(async () => {
 
 describe("POST /login", () => {
   it("Debe iniciar sesión correctamente y devolver un token", async () => {
-    // Crear un usuario con contraseña hasheada
     const hashedPassword = await bcrypt.hash("password123", 10);
     const user = new Player({
       name: "Jugador1",
@@ -41,9 +40,8 @@ describe("POST /login", () => {
       .post("/auth")
       .send({ email: "jugador1@example.com", password: "password123" });
 
-    // Verificar respuesta
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Inicio de sesión exitoso");
+    expect(response.body).toHaveProperty("message", "Login successful");
     expect(response.body).toHaveProperty("token");
     expect(typeof response.body.token).toBe("string");
   });
@@ -54,14 +52,14 @@ describe("POST /login", () => {
       .send({ email: "noexiste@example.com", password: "password123" });
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Credenciales inválidas");
+    expect(response.body).toHaveProperty("message", "User not found");
   });
 
   it("Debe devolver error 400 si faltan campos obligatorios", async () => {
     const response = await request(app).post("/auth").send({ email: "jugador1@example.com" });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "El correo y la contraseña son obligatorios");
+    expect(response.body).toHaveProperty("message", "Email and password are required");
   });
 
   it("Debe devolver error 404 si la contraseña es incorrecta", async () => {
@@ -78,7 +76,7 @@ describe("POST /login", () => {
       .post("/auth")
       .send({ email: "jugador1@example.com", password: "wrongpassword" });
 
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Credenciales inválidas");
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Invalid credentials");
   });
 });

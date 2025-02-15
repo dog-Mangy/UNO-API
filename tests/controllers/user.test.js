@@ -13,10 +13,10 @@ beforeAll(async () => {
   
   mongoServer = await MongoMemoryServer.create({
     binary: {
-      skipMD5: true, // Acelerar la descarga
+      skipMD5: true, 
     },
     instance: {
-      port: 27017, // Fijar un puerto para evitar conflictos
+      port: 27017, 
     },
   });
 
@@ -58,7 +58,7 @@ describe("GET /users", () => {
     const response = await request(app).get("/users");
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "No se encontraron jugadores");
+    expect(response.body).toHaveProperty("message", "No players found");
   });
 
   it("Debe devolver una lista de jugadores si existen en la base de datos", async () => {
@@ -88,7 +88,7 @@ describe("GET /users/:id", () => {
     expect(response.body).toMatchObject({
         error: true,
         status: 404,
-        message: "Jugador no encontrado"
+        message: "User not found"
     });
 });
 
@@ -101,7 +101,7 @@ describe("GET /users/:id", () => {
       password: "fliateamo" 
     });
 
-    await player.save(); // Guardar el jugador en la base de datos
+    await player.save(); 
 
     const response = await request(app).get(`/users/${player._id}`);
 
@@ -114,7 +114,6 @@ describe("GET /users/:id", () => {
 
 describe("PUT /users/:id", () => {
   it("Debe actualizar un usuario correctamente", async () => {
-    // Crear un usuario en la base de datos
     const player = new Player({ 
       name: "Jugador1", 
       age: 20, 
@@ -124,7 +123,6 @@ describe("PUT /users/:id", () => {
 
     await player.save();
 
-    // Datos a actualizar
     const updates = {
       name: "JugadorActualizado",
       age: 25,
@@ -133,9 +131,9 @@ describe("PUT /users/:id", () => {
     const response = await request(app).put(`/users/${player._id}`).send(updates);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Jugador actualizado exitosamente");
-    expect(response.body.updatedPlayer).toHaveProperty("name", "JugadorActualizado");
-    expect(response.body.updatedPlayer).toHaveProperty("age", 25);
+    expect(response.body).toHaveProperty("message", "Player successfully updated");
+    expect(response.body.updatedUser).toHaveProperty("name", "JugadorActualizado");
+    expect(response.body.updatedUser).toHaveProperty("age", 25);
   });
 
   it("Debe devolver un error 404 si el jugador no existe", async () => {
@@ -147,14 +145,13 @@ describe("PUT /users/:id", () => {
     expect(response.body).toMatchObject({
       error: true,
       status: 404,
-      message: "Jugador no encontrado"
+      message: "Player not found"
     });
   });
 });
 
 describe("DELETE /users/:id", () => {
   it("Debe eliminar un usuario correctamente", async () => {
-    // Crear un usuario en la base de datos
     const player = new Player({ 
       name: "Jugador1", 
       age: 20, 
@@ -164,20 +161,18 @@ describe("DELETE /users/:id", () => {
 
     await player.save();
 
-    // Hacer la petición DELETE
     const response = await request(app).delete(`/users/${player._id}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Jugador eliminado exitosamente");
-    expect(response.body.deletePlayer).toHaveProperty("_id", player._id.toString());
+    expect(response.body).toHaveProperty("message", "Player successfully eliminated");
+    expect(response.body.deletedUser).toHaveProperty("_id", player._id.toString());
 
-    // Verificar que el usuario fue eliminado realmente
     const deletedPlayer = await Player.findById(player._id);
     expect(deletedPlayer).toBeNull();
   });
 
   it("Debe devolver un error 404 si el usuario no existe", async () => {
-    const fakeId = new mongoose.Types.ObjectId(); // ID aleatorio
+    const fakeId = new mongoose.Types.ObjectId(); 
 
     const response = await request(app).delete(`/users/${fakeId}`);
 
@@ -185,7 +180,7 @@ describe("DELETE /users/:id", () => {
     expect(response.body).toMatchObject({
       error: true,
       status: 404,
-      message: "Jugador no encontrado"
+      message: "Player not found"
     });
   });
 });

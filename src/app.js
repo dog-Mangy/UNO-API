@@ -30,5 +30,4 @@ app.use('/', menuRouter);
 app.use(errorHandler); 
 
 
-// Exportar la aplicación configurada
 export default app;

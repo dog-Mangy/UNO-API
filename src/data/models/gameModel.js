@@ -4,8 +4,8 @@ const dataSchema = new mongoose.Schema({
     title: { type: String, required: true },
     status: { type: String, enum: ["pending", "started", "finished"], required: true },
     maxPlayers: { type: Number, required: true },
-    players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }], // Lista de jugadores
-    turnIndex: { type: Number, default: 0 }, // Índice del jugador actual
+    players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }], 
+    turnIndex: { type: Number, default: 0 }, 
     creator: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true }  
 }, { timestamps: true });
 

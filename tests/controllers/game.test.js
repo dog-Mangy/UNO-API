@@ -64,7 +64,7 @@ describe("POST /games", () => {
     const response = await request(app).post("/games").send({ title: "Juego incompleto" });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "Todos los campos son obligatorios");
+    expect(response.body).toHaveProperty("message", "All fields are required");
   });
 
   it("Debe devolver un error 404 si el creador del juego no existe", async () => {
@@ -80,7 +80,7 @@ describe("POST /games", () => {
     const response = await request(app).post("/games").send(newGame);
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Jugador no encontrado");
+    expect(response.body).toHaveProperty("message", "Player not found");
   });
 });
 
@@ -91,7 +91,7 @@ describe("GET /games", () => {
       const response = await request(app).get("/games");
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "No se encontraron juegos");
+      expect(response.body).toHaveProperty("message", "No games found");
     });
   
     it("Debe devolver una lista de juegos si existen en la base de datos", async () => {
@@ -113,12 +113,12 @@ describe("GET /games", () => {
 describe("GET /games/:id", () => {
   
     it("Debe devolver un error 404 si el juego no existe", async () => {
-      const fakeId = new mongoose.Types.ObjectId(); // Genera un ID falso
+      const fakeId = new mongoose.Types.ObjectId(); 
   
       const response = await request(app).get(`/games/${fakeId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Juego no encontrado");
+      expect(response.body).toHaveProperty("message", "Game not found");
     });
 
     it("Debe devolver un juego si el ID existe", async () => {
@@ -145,7 +145,6 @@ describe("GET /games/:id", () => {
 
   describe("PUT /games/:id", () => {
     it("Debe actualizar un juego existente", async () => {
-      // Crear un juego de prueba en la BD
       const game = new Game({ 
         title: "Juego Original", 
         status: "pending", 
@@ -155,7 +154,6 @@ describe("GET /games/:id", () => {
   
       await game.save();
   
-      // Datos a actualizar
       const updates = {
         title: "Juego Actualizado",
         status: "active",
@@ -165,7 +163,7 @@ describe("GET /games/:id", () => {
       const response = await request(app).put(`/games/${game._id}`).send(updates);
   
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("message", "Juego actualizado exitosamente");
+      expect(response.body).toHaveProperty("message", "Game updated successfully");
       expect(response.body.updatedGame).toHaveProperty("title", "Juego Actualizado");
       expect(response.body.updatedGame).toHaveProperty("status", "active");
       expect(response.body.updatedGame).toHaveProperty("maxPlayers", 6);
@@ -184,14 +182,13 @@ describe("GET /games/:id", () => {
       const response = await request(app).put(`/games/${fakeId}`).send(updates);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Juego no encontrado");
+      expect(response.body).toHaveProperty("message", "Game not found");
     });
   });
 
 
   describe("DELETE /games/:id", () => {
     it("Debe eliminar un juego existente", async () => {
-      // Crear un juego en la BD
       const game = new Game({ 
         title: "Juego a eliminar", 
         status: "pending", 
@@ -204,7 +201,7 @@ describe("GET /games/:id", () => {
       const response = await request(app).delete(`/games/${game._id}`);
   
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("message", "Juego eliminado exitosamente");
+      expect(response.body).toHaveProperty("message", "Game deleted successfully");
   
       const gameInDb = await Game.findById(game._id);
       expect(gameInDb).toBeNull();
@@ -216,11 +213,6 @@ describe("GET /games/:id", () => {
       const response = await request(app).delete(`/games/${fakeId}`);
   
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty("message", "Juego no encontrado");
+      expect(response.body).toHaveProperty("message", "Game not found");
     });
   });
-  
-  
-  
-
-  

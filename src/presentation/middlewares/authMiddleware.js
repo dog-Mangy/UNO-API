@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { tokenBlacklist } from "../controllers/auth.js";
+import { tokenBlacklistService } from "../../business/services/tokenBlacklistService.js";
 
 dotenv.config();
 
@@ -11,8 +11,7 @@ export const authenticateJWT = (req, res, next) => {
         return res.status(401).json({ message: "Acceso denegado: No hay token" });
     }
 
-    // 🔴 Verificar si el token está en la lista negra
-    if (tokenBlacklist.has(token)) {
+    if (tokenBlacklistService.has(token)) { 
         return res.status(401).json({ message: "Token inválido o expirado" });
     }
 
