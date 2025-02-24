@@ -7,6 +7,7 @@ import { Player } from "../../src/data/models/userModel.js";
 import { PlayerGameState } from "../../src/data/models/playerGameState.js";
 import { jest } from "@jest/globals";
 import { startGameService } from "../../src/business/services/gameService.js";
+import { Card } from "../../src/data/models/cardModel.js";
 
 dotenv.config();
 
@@ -49,6 +50,21 @@ describe("startGameService", () => {
             { user: player2._id, game: game._id, ready: true }
         ]);
 
+        const colors = ["red", "blue", "green", "yellow"];
+        const values = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        const deck = [];
+
+        for (let i = 0; i < 14; i++) { 
+            deck.push({
+                color: colors[i % colors.length],
+                value: values[i % values.length],
+                playerId: null, 
+                gameId: game._id
+            });
+        }
+
+        await Card.insertMany(deck);
+
         const token = jwt.sign({ id: creator._id.toString(), email: creator.email }, process.env.SECRET_KEY);
 
         const response = await startGameService(game._id, token);
@@ -58,6 +74,9 @@ describe("startGameService", () => {
 
         const updatedGame = await Game.findById(game._id);
         expect(updatedGame.status).toBe("started");
+
+        const assignedCards = await Card.find({ gameId: game._id, playerId: { $ne: null } });
+        expect(assignedCards.length).toBe(4);
     });
 
     it("Debe devolver error 400 si no todos los jugadores están listos", async () => {

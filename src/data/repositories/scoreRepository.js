@@ -30,4 +30,10 @@ export class ScoreRepository {
     static async findGameById(gameId) {
         return await Game.findById(gameId);
     }
+
+    static async getScores(gameId) {
+        return await Score.find({ gameId })
+            .populate("playerId", "username") // Opcional: obtener el nombre del jugador
+            .select("playerId score");
+    }
 }

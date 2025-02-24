@@ -1,8 +1,9 @@
 import express from "express";
 import { updateReadyState } from "../controllers/gameState.js";
+import { errorHandler } from "../middlewares/errorHandler.js";
 
-const GameStatusRouter = express.Router();
+export const GameStatusRouter = express.Router();
 
 GameStatusRouter.put("/:gameId/ready", updateReadyState);
 
-export default GameStatusRouter;
+GameStatusRouter.use(errorHandler);

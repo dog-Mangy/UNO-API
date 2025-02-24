@@ -48,3 +48,49 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3000/cards/679058ba9d5e76e50c1a6211 HTTP/1.1
+
+
+###
+PUT http://localhost:3000/cards/play
+Content-Type: application/json
+
+{
+  "userId": "67a92543338e828ae2e77c5c",
+  "gameId": "67b8999fe23dbeea70de2f46",
+  "cardId": "67b95b55b5b3c5c959d8ebdc" 
+} 
+
+
+###
+PUT http://localhost:3000/cards/draw
+Content-Type: application/json
+
+{
+  "userId": "67b610ebd76a2ee7647f1d21",
+  "gameId": "67b8999fe23dbeea70de2f46"
+}
+
+
+###
+PUT http://localhost:3000/cards/declare-uno
+Content-Type: application/json
+
+{
+  "userId": "67a92543338e828ae2e77c5c",
+  "gameId": "67b8999fe23dbeea70de2f46"
+}
+
+###
+POST http://localhost:3000/cards/challenge-Uno
+Content-Type: application/json
+
+{
+    "challengerId": "67b610ebd76a2ee7647f1d21",
+    "challengedPlayerId": "67a90540ddb260dbebc75c3b",
+    "gameId": "67b8999fe23dbeea70de2f46"
+}
+
+
+###
+GET  http://localhost:3000/cards/player/67a92543338e828ae2e77c5c/hand
+

@@ -25,8 +25,7 @@ gameRouter.get('/:id/players', getPlayers);
 
 
 
-
-
+ 
 gameRouter.put('/:id', update);
 gameRouter.patch('/:id', update);
 

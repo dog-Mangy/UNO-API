@@ -12,7 +12,7 @@ beforeAll(async () => {
   jest.setTimeout(500000);
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
-}, 500000);
+}, 5000000);
 
 afterAll(async () => {
   await mongoose.disconnect();

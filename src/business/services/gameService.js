@@ -5,6 +5,9 @@ import { GameRepository } from "../../data/repositories/gameRepository.js";
 import { UserRepository } from "../../data/repositories/userRepository.js";
 import { PlayerGameStateRepository } from "../../data/repositories/playerGameStateRepository.js";
 import { NotFoundError, ValidationError, ConflictError, UnauthorizedError } from "../../utils/customErrors.js";
+import { PlayerGameStateService } from "./playerGameStateService.js";
+import { CardService } from "./card/CardService.js";
+import { CardRepository } from "../../data/repositories/cardRepository.js";
 
 dotenv.config();
 
@@ -36,6 +39,8 @@ export const joinGameService = async (gameId, userId) => {
         throw new ValidationError("The game is already full");
     }
 
+    await PlayerGameStateService.updateReadyState(gameId, userId, false);
+
     const updatedGame = await GameRepository.addPlayer(gameId, userId);
     return { status: 200, body: { message: "You have joined the game", updatedGame } };
 };
@@ -61,6 +66,7 @@ export const leaveGameService = async (game_id, userId) => {
     const updatedGame = await GameRepository.removePlayer(game_id, userId);
     return { status: 200, body: { message: "User successfully left the game", game: updatedGame } };
 };
+
 
 export const startGameService = async (game_id, access_token) => {
     if (!game_id || !access_token) {
@@ -90,8 +96,27 @@ export const startGameService = async (game_id, access_token) => {
 
     const updatedGame = await GameRepository.updateStatus(game_id, "started");
 
-    return { status: 200, body: { message: "Game started successfully" }, updatedGame };
+    const players = playersReadyState.map(player => player.user.toString());
+
+    let deck = await CardRepository.findAllInDeck(game_id);
+
+    if (deck.length === 0) {
+        throw new Error("No hay cartas en el mazo para iniciar el juego.");
+    }
+
+    const firstCard = deck.pop();
+    await CardRepository.updateById(firstCard._id, { discarded: true });
+
+    deck = await CardRepository.findAllInDeck(game_id); 
+    await CardService.distributeCards(players, 2 , deck, game_id); 
+
+    return { 
+        status: 200, 
+        body: { message: "Game started successfully", firstCard }, 
+        updatedGame 
+    };
 };
+
 
 export const endGameService = async (game_id, access_token) => {
     if (!game_id || !access_token) {
@@ -120,6 +145,39 @@ export const endGameService = async (game_id, access_token) => {
     const updatedGame = await GameRepository.updateStatus(game_id, "finished");
 
     return { status: 200, body: { message: "Game ended successfully", game: updatedGame } };
+};
+
+
+export const getNextPlayerService = async (gameId) => {
+    const game = await GameRepository.getGameWithPlayers(gameId);
+
+    if (!game) {
+        throw new Error("Juego no encontrado.");
+    }
+
+    if (!game.players || game.players.length === 0) {
+        throw new Error("No hay jugadores en la partida.");
+    }
+
+    const currentTurnIndex = game.turnIndex ?? 0;
+    const nextIndex = (currentTurnIndex + 1) % game.players.length;
+
+    if (!game.players[nextIndex]) {
+        throw new Error("No se encontró el siguiente jugador.");
+    }
+
+    const nextPlayer = game.players[nextIndex];
+
+    const updatedGame = await GameRepository.updateById(gameId, { turnIndex: nextIndex }, { new: true });
+
+    if (!updatedGame) {
+        throw new Error("No se pudo actualizar el turno en la base de datos.");
+    }
+
+    console.log(`🔄 Turno cambiado: Jugador actual -> ${nextPlayer._id}`);
+    console.log("📌 Estado actualizado del juego:", updatedGame);
+
+    return { nextPlayerId: nextPlayer._id, message: "Turno actualizado correctamente" };
 };
 
 
@@ -194,7 +252,7 @@ export const getUserByIdService = async (id) => {
 };
 
 export const updateGameService = async (id, updates) => {
-    const updatedGame = await GameRepository.updateById(id, updates, { new: true });
+    const updatedGame = await GameRepository.updateByIdGame(id, updates, { new: true });
     if (!updatedGame) {
         throw new NotFoundError("Game not found");
     }

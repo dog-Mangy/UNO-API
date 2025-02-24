@@ -14,7 +14,7 @@ beforeAll(async () => {
   jest.setTimeout(500000);  
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
-}, 500000);
+}, 5000000);
 
 afterAll(async () => {
   await mongoose.disconnect();
@@ -64,7 +64,7 @@ describe("POST /cards", () => {
     });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "All fields are required");
+    expect(response.body).toHaveProperty("message", "Color, value and gameId are required");
   });
 });
 

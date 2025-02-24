@@ -15,7 +15,7 @@ beforeAll(async () => {
   await mongoose.connect(mongoServer.getUri());
 
   process.env.SECRET_KEY = TEST_SECRET;
-}, 500000);
+}, 5000000);
 
 afterAll(async () => {
   await mongoose.disconnect();

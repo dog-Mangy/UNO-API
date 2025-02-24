@@ -2,8 +2,8 @@ import { CardCreationService } from "../../business/services/card/CardCreationSe
 import { CardDeletionService } from "../../business/services/card/CardDeletionService.js";
 import { CardGameService } from "../../business/services/card/CardGameService.js";
 import { CardRetrievalService } from "../../business/services/card/CardRetrievalService.js";
+import { CardService } from "../../business/services/card/CardService.js";
 import { CardUpdateService } from "../../business/services/card/CardUpdateService.js";
-
 
 
 export const post = async (req, res, next) => {
@@ -59,3 +59,78 @@ export const deleted = async (req, res, next) => {
         next(error);
     }
 };
+
+export const playCard = async (req, res, next) => {
+    try {
+        const { userId, cardId, gameId } = req.body;
+
+        const result = await CardService.playCard(userId, gameId, cardId);
+
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const drawnCard = async (req, res, next) => {
+    try {
+        const { gameId, userId } = req.body; 
+
+        if (!userId) {
+            return res.status(400).json({ message: "userId es requerido" });
+        }
+
+        const result = await CardService.drawCard(userId, gameId);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const declareUno = async (req, res, next) => {
+    try {
+        const { gameId, userId } = req.body; 
+
+        if (!userId) {
+            return res.status(400).json({ message: "userId es requerido" });
+        }
+
+        const result = await CardService.declareUno(userId, gameId);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const challengeUno = async (req, res, next) => {
+    try {
+        const { gameId, challengerId, challengedPlayerId } = req.body;
+
+        if (!challengerId || !challengedPlayerId) {
+            return res.status(400).json({ message: "challengerId y challengedPlayerId son requeridos." });
+        }
+
+        const result = await CardService.challengeUno(challengerId, challengedPlayerId, gameId);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getPlayerHand = async (req, res, next) => {
+    try {
+        const { playerId } = req.params; 
+
+        if (!playerId) {
+            return res.status(400).json({ message: "playerId es requerido." });
+        }
+
+        const hand = await CardService.getPlayerHand(playerId);
+
+        return res.status(200).json(hand);
+    } catch (error) {
+        next(error); 
+    }
+};
+

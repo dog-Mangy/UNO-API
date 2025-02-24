@@ -7,8 +7,9 @@ import { loginRouter } from './presentation/routes/login.js';
 import { userRouter } from './presentation/routes/user.js';
 import { logoutRouter } from './presentation/routes/logOut.js';
 import { profileRouter } from './presentation/routes/profile.js';
-import GameStatusRouter from './presentation/routes/playerGameState.js';
 import { errorHandler } from './presentation/middlewares/errorHandler.js';
+import { GameStatusRouter } from './presentation/routes/playerGameState.js';
+import { gameHistoryRouter } from './presentation/routes/gameHistory.js';
 
 
 
@@ -25,6 +26,7 @@ app.use('/users', userRouter);
 app.use('/games', gameRouter);
 app.use('/cards', cardRouter);
 app.use('/scores', scoreRouter);
+app.use('/gameHistory', gameHistoryRouter)
 app.use('/', menuRouter);
 
 app.use(errorHandler); 

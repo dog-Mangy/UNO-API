@@ -1,3 +1,4 @@
+import { GameRepository } from "../../../data/repositories/gameRepository.js";
 import { ScoreRepository } from "../../../data/repositories/scoreRepository.js";
 import { NotFoundError, ValidationError } from "../../../utils/customErrors.js";
 import { ScoreValidator } from "../../validators/scoreValidator.js";
@@ -71,5 +72,59 @@ export class ScoreService {
             throw new NotFoundError("Score not found");
         }
         return deletedScore;
+    }
+
+    static async calculateFinalScores(gameId, winnerId) {
+        const game = await GameRepository.getGameWithPlayers(gameId);
+    
+        if (!game) {
+            throw new ValidationError("Juego no encontrado.");
+        }
+    
+        if (!winnerId) {
+            throw new ValidationError("El ganador no es válido.");
+        }
+    
+        // Verificar si el juego tiene jugadores
+        if (!game.players || game.players.length === 0) {
+            throw new ValidationError("No hay jugadores en la partida.");
+        }
+    
+        const sortedPlayers = game.players
+            .filter(player => player._id && player._id.toString() !== winnerId.toString())
+            .map(player => player._id.toString());
+    
+        const scores = {
+            [winnerId]: 10,
+            [sortedPlayers[0] || "default"]: 5,
+            [sortedPlayers[1] || "default"]: 3
+        };
+    
+        const validScores = Object.entries(scores)
+            .filter(([playerId]) => playerId !== "default");
+    
+        await Promise.all(
+            validScores.map(([playerId, score]) =>
+                ScoreRepository.create({ playerId, gameId, score })
+            )
+        );
+    
+        return Object.fromEntries(validScores);
+    }
+
+    static async getGameScores(gameId) {
+        if (!gameId) {
+            throw new Error("gameId es requerido.");
+        }
+
+        const scoresData = await ScoreRepository.getScores(gameId);
+
+        const scores = scoresData.reduce((acc, score) => {
+            const playerName = score.playerId.username || score.playerId._id.toString();
+            acc[playerName] = score.score;
+            return acc;
+        }, {});
+
+        return { scores };
     }
 }

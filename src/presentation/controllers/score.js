@@ -63,3 +63,16 @@ export const deleted = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const getGameScores = async (req, res, next) => {
+    try {
+        const { gameId } = req.params;
+
+        const result = await ScoreService.getGameScores(gameId);
+
+        return res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};

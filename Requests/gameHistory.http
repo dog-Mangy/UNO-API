@@ -1,0 +1,2 @@
+###
+GET http://localhost:3000/gameHistory/games/67b8999fe23dbeea70de2f46/history

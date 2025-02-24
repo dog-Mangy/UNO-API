@@ -1,4 +1,4 @@
-import { startGameService, joinGameService, createGameService, leaveGameService, endGameService, getSatusByIdService, getUserByIdService, getCurrentPlayerService,  } from "../../business/services/gameService.js";
+import { startGameService, joinGameService, createGameService, leaveGameService, endGameService, getSatusByIdService, getUserByIdService, getCurrentPlayerService  } from "../../business/services/gameService.js";
 import { getAllGamesService, getGameByIdService, updateGameService, deleteGameService } from "../../business/services/gameService.js";
 
 export const post = async (req, res, next) => {

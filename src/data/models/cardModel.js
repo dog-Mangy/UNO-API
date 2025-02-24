@@ -1,18 +1,19 @@
 import mongoose from "mongoose";
 
-const dataSchema = new mongoose.Schema({
+const cardSchema = new mongoose.Schema({
     color: { type: String, required: true },
     value: { type: String, required: true },
     playerId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Users",
-        required: true 
+        default: null 
     },
     gameId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Games",
         required: true 
     },
+    discarded: { type: Boolean, default: false } 
 }, { timestamps: true });
 
-export const Card = mongoose.connection.models.Cards || mongoose.model("Cards", dataSchema);
+export const Card = mongoose.models.Cards || mongoose.model("Cards", cardSchema);

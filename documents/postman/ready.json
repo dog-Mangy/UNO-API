@@ -1,0 +1,33 @@
+{
+    "info": {
+      "_postman_id": "unique-id-game-status",
+      "name": "Game Status API Collection",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Update Player Ready State",
+        "request": {
+          "method": "PUT",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"userId\": \"679abacdcf080975c039c303\",\n  \"ready\": true\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/GameStatus/679ad00d96a34c85a900c0c0/ready",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["GameStatus", "679ad00d96a34c85a900c0c0", "ready"]
+          }
+        }
+      }
+    ]
+  }
+  

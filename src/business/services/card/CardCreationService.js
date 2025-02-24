@@ -1,11 +1,11 @@
-import { CardRepository } from "../../../data/repositories/cardRepository";
-import { ValidationError } from "../../../utils/customErrors";
+import { CardRepository } from "../../../data/repositories/cardRepository.js";
+import { ValidationError } from "../../../utils/customErrors.js";
 
 
 export class CardCreationService {
-    static async createCard({ color, value, playerId, gameId }) {
-        if (!color || !value || !playerId || !gameId) {
-            throw new ValidationError("All fields are required");
+    static async createCard({ color, value, playerId = null, gameId }) {
+        if (!color || !value || !gameId) {
+            throw new ValidationError("Color, value and gameId are required");
         }
         return await CardRepository.create({ color, value, playerId, gameId });
     }
