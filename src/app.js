@@ -10,13 +10,18 @@ import { profileRouter } from './presentation/routes/profile.js';
 import { errorHandler } from './presentation/middlewares/errorHandler.js';
 import { GameStatusRouter } from './presentation/routes/playerGameState.js';
 import { gameHistoryRouter } from './presentation/routes/gameHistory.js';
+import { createCacheMiddleware } from './presentation/middlewares/CacheMiddleware.js';
 
 
 
 const app = express();
+const cacheMiddleware = createCacheMiddleware({ max: 2, maxAge: 30000 });
+
 
 // Configurar middlewares
 app.use(express.json());
+app.use(cacheMiddleware);
+
 
 app.use("/auth", loginRouter);
 app.use("/GameStatus", GameStatusRouter);

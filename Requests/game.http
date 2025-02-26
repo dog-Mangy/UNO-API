@@ -6,7 +6,7 @@ Content-Type: application/json
     "title": "Juego 3",
     "status": "pending",
     "maxPlayers": 4,
-    "creator": "679abacdcf080975c039c303"
+    "creator": "67a90540ddb260dbebc75c3b"
 }
 
 ###
@@ -41,7 +41,7 @@ POST http://localhost:3000/games/current-player
 Content-Type: application/json
 
 {
-  "game_id": "679ad00d96a34c85a900c0c0"
+  "game_id": "67a925ae338e828ae2e77c60"
 }
 
 
@@ -79,3 +79,13 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3000/games/679aa3c90e2738f6133e580e HTTP/1.1
+
+
+###
+PUT http://localhost:3000/games/end-turn
+Content-Type: application/json
+
+{
+  "gameId": "67b8999fe23dbeea70de2f46",
+  "userId": "67a90540ddb260dbebc75c3b"
+}

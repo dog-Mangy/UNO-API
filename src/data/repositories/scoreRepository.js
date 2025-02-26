@@ -33,7 +33,7 @@ export class ScoreRepository {
 
     static async getScores(gameId) {
         return await Score.find({ gameId })
-            .populate("playerId", "username") // Opcional: obtener el nombre del jugador
+            .populate("playerId", "username")
             .select("playerId score");
     }
 }
