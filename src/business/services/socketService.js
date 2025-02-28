@@ -1,4 +1,4 @@
-import { joinGameService } from "./gameService.js";
+import { joinGameService } from "./game/gameService.js";
 
 export const socketService = {
     async handleJoinGame(gameId, playerId, socket, io) {

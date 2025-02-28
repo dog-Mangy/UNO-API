@@ -1,5 +1,9 @@
-import { startGameService, joinGameService, createGameService, leaveGameService, endGameService, getSatusByIdService, getUserByIdService, getCurrentPlayerService  } from "../../business/services/gameService.js";
-import { getAllGamesService, getGameByIdService, updateGameService, deleteGameService } from "../../business/services/gameService.js";
+import { createGameService } from "../../business/services/game/CreationGameService.js";
+import { deleteGameService } from "../../business/services/game/DeleteGameService.js";
+import { getAllGamesService, getGameByIdService } from "../../business/services/game/getAllGames.js";
+import { updateGameService } from "../../business/services/game/updateGameService.js";
+import { joinGameService, leaveGameService, endGameService, getSatusByIdService, getUserByIdService, getCurrentPlayerService  } from "../../business/services/game/gameService.js";
+import { startGameService } from "../../business/services/game/StartGameService.js";
 
 export const post = async (req, res, next) => {
     try {
@@ -92,7 +96,6 @@ export const getCurrentPlayer = async (req, res, next) => {
         next(error);
     }
 };
-
 
 export const update = async (req, res, next) => {
     try {

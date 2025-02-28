@@ -1,6 +1,8 @@
+import { ValidationError } from "../../../utils/customErrors.js";
+
 export class AuthStrategy {
     authenticate(user) {
-      throw new Error("Método 'authenticate' debe ser implementado");
+      throw new ValidationError("Method 'authenticate' must be implemented.");
     }
   }
   

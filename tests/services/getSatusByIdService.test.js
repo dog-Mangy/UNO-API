@@ -4,8 +4,8 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import { Game } from "../../src/data/models/gameModel.js";
 import { Player } from "../../src/data/models/userModel.js";
 
-import { getSatusByIdService } from "../../src/business/services/gameService.js";
 import { jest } from "@jest/globals";
+import { getSatusByIdService } from "../../src/business/services/game/gameService.js";
 
 let mongoServer;
 

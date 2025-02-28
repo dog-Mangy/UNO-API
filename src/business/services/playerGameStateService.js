@@ -11,16 +11,16 @@ export class PlayerGameStateService {
 
         const game = await GameRepository.findById(gameId);
         if (!game) {
-            throw new NotFoundError("Juego no encontrado");
+            throw new NotFoundError("Game not found");
         }
 
         const user = await UserRepository.findById(userId);
         if (!user) {
-            throw new NotFoundError("Jugador no encontrado");
+            throw new NotFoundError("Player not found");
         }
 
         const updatedState = await PlayerGameStateRepository.updateReadyState(userId, gameId, ready);
 
-        return { message: "Estado actualizado correctamente", playerState: updatedState };
+        return { message: "Stade updated successfully", playerState: updatedState };
     }
 }

@@ -6,8 +6,8 @@ import { Game } from "../../src/data/models/gameModel.js";
 import { Player } from "../../src/data/models/userModel.js";
 import { PlayerGameState } from "../../src/data/models/playerGameState.js";
 import { jest } from "@jest/globals";
-import { startGameService } from "../../src/business/services/gameService.js";
 import { Card } from "../../src/data/models/cardModel.js";
+import { startGameService } from "../../src/business/services/game/StartGameService.js";
 
 dotenv.config();
 

@@ -18,9 +18,10 @@ const app = express();
 const cacheMiddleware = createCacheMiddleware({ max: 2, maxAge: 30000 });
 
 
-// Configurar middlewares
 app.use(express.json());
-app.use(cacheMiddleware);
+if (process.env.NODE_ENV !== "test") {
+    app.use(cacheMiddleware);
+}
 
 
 app.use("/auth", loginRouter);

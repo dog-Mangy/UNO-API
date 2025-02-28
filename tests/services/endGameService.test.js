@@ -4,8 +4,8 @@ import { Game } from "../../src/data/models/gameModel.js";
 import { Player } from "../../src/data/models/userModel.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { endGameService } from "../../src/business/services/gameService.js";
 import { jest } from "@jest/globals";
+import { endGameService } from "../../src/business/services/game/gameService.js";
 
 
 dotenv.config();

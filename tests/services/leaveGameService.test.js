@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 import { Game } from "../../src/data/models/gameModel.js";
 import { Player } from "../../src/data/models/userModel.js";
 import { PlayerGameState } from "../../src/data/models/playerGameState.js";
-import { leaveGameService } from "../../src/business/services/gameService.js";
 import { jest } from "@jest/globals";
+import { leaveGameService } from "../../src/business/services/game/gameService.js";
 
 dotenv.config();
 

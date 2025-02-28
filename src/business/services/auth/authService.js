@@ -7,7 +7,7 @@ dotenv.config();
 export class AuthService {
   constructor(authStrategy, blacklistService, userService) {
     if (!authStrategy || !blacklistService || !userService) {
-      throw new Error("authStrategy, blacklistService, and userService are required");
+      throw new ValidationError("authStrategy, blacklistService, and userService are required");
     }
     this.authStrategy = authStrategy;
     this.blacklistService = blacklistService;
