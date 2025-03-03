@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const dataSchema = new mongoose.Schema({
     title: { type: String, required: true },
-    status: { type: String, enum: ["pending", "started", "finished"], required: true },
+    status: { type: String, enum: ["pending", "started", "finished"], required: true, default: "pending" }, 
     maxPlayers: { type: Number, required: true },
     players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }], 
     turnIndex: { type: Number, default: 0 }, 

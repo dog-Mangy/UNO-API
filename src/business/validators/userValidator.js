@@ -13,10 +13,6 @@ export class UserValidator {
             throw new ValidationError("The name must be at least 3 characters long");
         }
 
-        if (!Number.isInteger(age) || age < 18) {
-            throw new ValidationError("You must be at least 18 years old to register");
-        }
-
         if (!this.isValidEmail(email)) {
             throw new ValidationError("Invalid email");
         }

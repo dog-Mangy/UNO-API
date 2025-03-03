@@ -2,6 +2,7 @@ import { CardRepository } from "../../../data/repositories/cardRepository.js";
 import { GameRepository } from "../../../data/repositories/gameRepository.js";
 import { PlayerGameStateRepository } from "../../../data/repositories/playerGameStateRepository.js";
 import { authenticateUser } from "../../../utils/authentificate.js";
+import { generateRandomCard } from "../../../utils/cardUtils.js";
 import { NotFoundError, UnauthorizedError, ValidationError } from "../../../utils/customErrors.js";
 import { CardService } from "../card/CardService.js";
 
@@ -53,6 +54,12 @@ async function validateStartGameParams(game_id, access_token) {
     await CardService.distributeCards(players, 2, deck, game_id);
     return firstCard;
   }
+
+  async function generateDeck(game_id) {
+    const deck = Array.from({ length: 21 }, () => generateRandomCard(game_id, null));
+    await CardRepository.insertMany(deck); // Guardar en la base de datos
+    return deck;
+}
   
   export const startGameService = async (game_id, access_token) => {
     await validateStartGameParams(game_id, access_token);
@@ -68,6 +75,8 @@ async function validateStartGameParams(game_id, access_token) {
     if (playersReadyState.length === 0) {
         throw new ValidationError("No hay jugadores en la partida. No se puede iniciar el juego.");
     }
+
+    await generateDeck(game_id);
 
     const updatedGame = await GameRepository.updateStatus(game_id, "started");
     

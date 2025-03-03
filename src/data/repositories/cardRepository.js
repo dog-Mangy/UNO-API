@@ -53,5 +53,9 @@ export class CardRepository {
     static async getPlayerCards(playerId) {
         return await Card.find({ playerId });
     }    
+
+    static async insertMany(cards) {
+        return await Card.insertMany(cards);
+    } 
     
 }

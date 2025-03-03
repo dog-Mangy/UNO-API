@@ -1,0 +1,10 @@
+GET http://localhost:3000/stats/requests HTTP/1.1
+
+###
+GET http://localhost:3000/stats/response-times HTTP/1.1
+
+
+###
+GET http://localhost:3000/stats//response-times HTTP/1.1
+
+/stats/status-codes

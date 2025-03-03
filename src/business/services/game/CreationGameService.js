@@ -3,7 +3,7 @@ import { UserRepository } from "../../../data/repositories/userRepository.js";
 import { NotFoundError, ValidationError } from "../../../utils/customErrors.js";
 
 export const createGameService = async ({ title, status, maxPlayers, creator }) => {
-    if (!title || !status || !maxPlayers || !creator) {
+    if (!title || !maxPlayers || !creator) {
         throw new ValidationError("All fields are required");
     }
 
