@@ -200,4 +200,17 @@ export class CardService {
         };
     }
 
+    static async getTopDeckCard(gameId) {
+        const topCard = await CardRepository.findTopDiscardCard(gameId);
+    
+        if (!topCard) {
+            throw new NotFoundError("No hay cartas en el mazo.");
+        }
+    
+        return {
+            color: topCard.color,
+            value: topCard.value
+        };
+    }
+
 }    

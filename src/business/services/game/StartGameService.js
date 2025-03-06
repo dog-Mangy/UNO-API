@@ -51,7 +51,7 @@ async function validateStartGameParams(game_id, access_token) {
     const firstCard = deck.pop();
     await CardRepository.updateById(firstCard._id, { discarded: true });
     deck = await CardRepository.findAllInDeck(game_id);
-    await CardService.distributeCards(players, 2, deck, game_id);
+    await CardService.distributeCards(players, 7, deck, game_id);
     return firstCard;
   }
 

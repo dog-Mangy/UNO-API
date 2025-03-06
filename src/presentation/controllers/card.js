@@ -120,17 +120,27 @@ export const challengeUno = async (req, res, next) => {
 
 export const getPlayerHand = async (req, res, next) => {
     try {
-        const { playerId } = req.params; 
+        const playerId = req.user.id; 
 
         if (!playerId) {
-            return res.status(400).json({ message: "playerId es requerido." });
+            return res.status(400).json({ message: "No se pudo obtener el ID del usuario desde el token." });
         }
 
         const hand = await CardService.getPlayerHand(playerId);
 
         return res.status(200).json(hand);
     } catch (error) {
-        next(error); 
+        next(error);
     }
 };
 
+
+export const getTopDeckCard = async (req, res, next) => {
+    try {
+        const { gameId } = req.params;
+        const topCard = await CardService.getTopDeckCard(gameId);
+        res.json(topCard);
+    } catch (error) {
+        next(error);
+    }
+};
