@@ -6,7 +6,7 @@ import { authenticateJWT } from '../middlewares/authMiddleware.js';
 
 export const gameRouter = express.Router()
 
-gameRouter.post('/', post);
+gameRouter.post('/', authenticateJWT , post);
 gameRouter.post("/:gameId/join", authenticateJWT, joinGame);
 gameRouter.post("/:gameId/leave", authenticateJWT, leaveGame);
 gameRouter.post("/start", authenticateJWT, startGame);

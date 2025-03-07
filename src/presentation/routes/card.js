@@ -14,7 +14,7 @@ cardRouter.get('/:id', get);
 cardRouter.get("/:gameId/top-deck", getTopDeckCard);
 
 
-cardRouter.post('/getLastCard', getTopDiscardCard);
+cardRouter.get('/getLastCard/:gameId', getTopDeckCard);
 
 
 cardRouter.post('/challenge-uno', challengeUno);

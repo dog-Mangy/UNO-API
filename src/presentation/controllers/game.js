@@ -7,8 +7,12 @@ import { startGameService } from "../../business/services/game/StartGameService.
 
 export const post = async (req, res, next) => {
     try {
-        const response = await createGameService(req.body);
-        res.status(response.status).json(response.body);
+        const { title, status, maxPlayers } = req.body;
+        const userId = req.user.id; 
+
+        const newGame = await createGameService({ title, status, maxPlayers, creator: userId });
+
+        res.status(201).json(newGame);
     } catch (error) {
         next(error);
     }
