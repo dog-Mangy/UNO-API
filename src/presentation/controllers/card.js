@@ -62,7 +62,12 @@ export const deleted = async (req, res, next) => {
 
 export const playCard = async (req, res, next) => {
     try {
-        const { userId, cardId, gameId } = req.body;
+        const userId = req.user.id; // Obtener el userId desde el token
+        const { cardId, gameId } = req.body;
+
+        if (!userId) {
+            return res.status(401).json({ message: "User ID not found in token" });
+        }
 
         const result = await CardService.playCard(userId, gameId, cardId);
 
@@ -75,10 +80,15 @@ export const playCard = async (req, res, next) => {
 
 export const drawnCard = async (req, res, next) => {
     try {
-        const { gameId, userId } = req.body; 
+        const { gameId } = req.body;  
+        const userId = req.user?.id; 
 
         if (!userId) {
-            return res.status(400).json({ message: "userId es requerido" });
+            return res.status(401).json({ message: "Usuario no autenticado" });
+        }
+
+        if (!gameId) {
+            return res.status(400).json({ message: "gameId es requerido" });
         }
 
         const result = await CardService.drawCard(userId, gameId);
@@ -88,9 +98,12 @@ export const drawnCard = async (req, res, next) => {
     }
 };
 
+
 export const declareUno = async (req, res, next) => {
     try {
-        const { gameId, userId } = req.body; 
+        const { gameId } = req.body; 
+        const userId = req.user?.id;
+
 
         if (!userId) {
             return res.status(400).json({ message: "userId es requerido" });

@@ -29,7 +29,7 @@ async function validateStartGameParams(game_id, access_token) {
   }
   
   function validateGameCreator(game, userId) {
-    if (game.creator.toString() !== userId) {
+    if (game.creator.toString().trim() !== userId.trim()) {
       throw new UnauthorizedError("You do not have permission to start this game");
     }
   }

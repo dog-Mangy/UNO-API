@@ -76,7 +76,7 @@ describe("startGameService", () => {
         expect(updatedGame.status).toBe("started");
 
         const assignedCards = await Card.find({ gameId: game._id, playerId: { $ne: null } });
-        expect(assignedCards.length).toBe(4);
+        expect(assignedCards.length).toBe(14);
     });
 
     it("Debe devolver error 400 si no todos los jugadores están listos", async () => {

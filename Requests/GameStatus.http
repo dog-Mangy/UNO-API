@@ -1,8 +1,8 @@
 ###
-PUT http://localhost:3000/GameStatus/679ad00d96a34c85a900c0c0/ready
+PUT http://localhost:3000/GameStatus/67cc86a2b61c0bad7cc42715/ready
 Content-Type: application/json
 
 {
-  "userId": "679afacdcf080975c039c303",
+  "userId": "67cbd29ccafa1ca1e5a04f2a",
   "ready": true
 }

@@ -16,3 +16,11 @@ export const getGameByIdService = async (id) => {
     }
     return { status: 200, body: game };
 };
+
+export const getGameCreatorService = async (gameId) => {
+    const creator = await GameRepository.getCreator(gameId);
+    if (!creator) {
+        throw new NotFoundError("Game not found or creator not set");
+    }
+    return { status: 200, body: creator };
+};

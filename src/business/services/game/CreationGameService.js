@@ -9,7 +9,7 @@ export const createGameService = async ({ title, status, maxPlayers, creator }) 
 
     const user = await UserRepository.findById(creator);
     if (!user) {
-        throw new NotFoundError("Jugador no encontrado");
+        throw new NotFoundError("Player not found");
     }
 
     return await GameRepository.create({ title, status, maxPlayers, creator });

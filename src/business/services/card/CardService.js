@@ -192,13 +192,18 @@ export class CardService {
             return { player: playerId, hand: [] };
         }
     
-        const formattedHand = playerCards.map(card => `${card.color} ${card.value}`);
+        const formattedHand = playerCards.map(card => ({
+            _id: card._id,   
+            color: card.color,
+            value: card.value
+        }));
     
         return {
             player: playerId,
             hand: formattedHand
         };
     }
+    
 
     static async getTopDeckCard(gameId) {
         const topCard = await CardRepository.findTopDiscardCard(gameId);

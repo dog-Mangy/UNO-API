@@ -56,6 +56,11 @@ export const GameRepository = {
     
     async updateByIdGame(id, updates) {
         return await Game.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
-    }
+    },
+
+    async getCreator(gameId) {
+        const game = await Game.findById(gameId).populate("creator", "name email"); // Opcional: Traer nombre y email
+        return game ? game.creator : null;
+    }    
     
 };

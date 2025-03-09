@@ -22,9 +22,9 @@ cardRouter.post('/challenge-uno', challengeUno);
 
 
 
-cardRouter.put('/play', playCard);
-cardRouter.put('/draw', drawnCard); 
-cardRouter.put('/declare-uno', declareUno);
+cardRouter.put('/play', authenticateJWT, playCard);
+cardRouter.put('/draw', authenticateJWT, drawnCard);
+cardRouter.put('/declare-uno',authenticateJWT, declareUno);
 
 
 

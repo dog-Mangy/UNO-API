@@ -7,6 +7,7 @@
     "fp-ts": "^2.16.9",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
+    "node-fetch": "^3.3.2",
     "redis": "^4.7.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
@@ -27,7 +28,7 @@
   "type": "module",
   "scripts": {
     "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "coverage": "jest --coverage",
+    "test:coverage": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "dev": "nodemon src/index.js"
   },
   "repository": {

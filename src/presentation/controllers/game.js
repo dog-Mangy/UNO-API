@@ -1,6 +1,6 @@
 import { createGameService } from "../../business/services/game/CreationGameService.js";
 import { deleteGameService } from "../../business/services/game/DeleteGameService.js";
-import { getAllGamesService, getGameByIdService } from "../../business/services/game/getAllGames.js";
+import { getAllGamesService, getGameByIdService, getGameCreatorService } from "../../business/services/game/getAllGames.js";
 import { updateGameService } from "../../business/services/game/updateGameService.js";
 import { joinGameService, leaveGameService, endGameService, getSatusByIdService, getUserByIdService, getCurrentPlayerService  } from "../../business/services/game/gameService.js";
 import { startGameService } from "../../business/services/game/StartGameService.js";
@@ -113,6 +113,17 @@ export const update = async (req, res, next) => {
 export const deleted = async (req, res, next) => {
     try {
         const response = await deleteGameService(req.params.id);
+        res.status(response.status).json(response.body);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const getCreator = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const response = await getGameCreatorService(id);
         res.status(response.status).json(response.body);
     } catch (error) {
         next(error);

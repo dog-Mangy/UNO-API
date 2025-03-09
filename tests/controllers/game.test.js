@@ -1,10 +1,14 @@
 import request from "supertest";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import app from "../../src/app.js";
 import { Player } from "../../src/data/models/userModel.js";
 import { Game } from "../../src/data/models/gameModel.js";
 import { jest } from "@jest/globals";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 let mongoServer;
@@ -40,14 +44,22 @@ describe("POST /games", () => {
 
     await player.save(); 
 
+    const token = jwt.sign(
+      { id: player._id.toString(), email: player.email }, 
+      process.env.SECRET_KEY,  
+      { expiresIn: "1h" }
+    );
+
     const newGame = {
       title: "Juego de prueba",
       status: "pending",
       maxPlayers: 4,
-      creator: player._id.toString(), 
     };
 
-    const response = await request(app).post("/games").send(newGame);
+    const response = await request(app)
+      .post("/games")
+      .set("Authorization", `Bearer ${token}`) 
+      .send(newGame);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("_id");
@@ -61,29 +73,56 @@ describe("POST /games", () => {
   });
 
   it("Debe devolver un error 400 si faltan campos obligatorios", async () => {
-    const response = await request(app).post("/games").send({ title: "Juego incompleto" });
+    const player = new Player({
+        name: "Jugador1",
+        age: 20,
+        email: "jugador1@example.com",
+        password: "password123",
+    });
+
+    await player.save();
+
+    const token = jwt.sign(
+        { id: player._id.toString(), email: player.email },
+        process.env.SECRET_KEY,
+        { expiresIn: "1h" }
+    );
+
+    const response = await request(app)
+        .post("/games")
+        .set("Authorization", `Bearer ${token}`) 
+        .send({ title: "Juego incompleto" }); 
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message", "All fields are required");
-  });
+    expect(response.body).toHaveProperty("message", "Todos los campos son obligatorios");
+});
 
-  it("Debe devolver un error 404 si el creador del juego no existe", async () => {
-    const fakeId = new mongoose.Types.ObjectId(); 
 
-    const newGame = {
+it("Debe devolver un error 404 si el creador del juego no existe", async () => {
+  const fakeId = new mongoose.Types.ObjectId(); 
+
+  const token = jwt.sign(
+      { id: fakeId.toString(), email: "fake@example.com" }, 
+      process.env.SECRET_KEY|| "claveSuperSecreta", 
+      { expiresIn: "1h" }
+  );
+
+  const newGame = {
       title: "Juego sin creador",
       status: "pendiente",
       maxPlayers: 4,
       creator: fakeId.toString(), 
-    };
+  };
 
-    const response = await request(app).post("/games").send(newGame);
+  const response = await request(app)
+      .post("/games")
+      .set("Authorization", `Bearer ${token}`) 
+      .send(newGame);
 
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Player not found");
-  });
+  expect(response.status).toBe(404);
+  expect(response.body).toHaveProperty("message", "Player not found");
 });
-
+});
 
 describe("GET /games", () => {
   
@@ -156,7 +195,7 @@ describe("GET /games/:id", () => {
   
       const updates = {
         title: "Juego Actualizado",
-        status: "active",
+        status: "started",
         maxPlayers: 6
       };
   
@@ -165,13 +204,13 @@ describe("GET /games/:id", () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("message", "Game updated successfully");
       expect(response.body.updatedGame).toHaveProperty("title", "Juego Actualizado");
-      expect(response.body.updatedGame).toHaveProperty("status", "active");
+      expect(response.body.updatedGame).toHaveProperty("status", "started");
       expect(response.body.updatedGame).toHaveProperty("maxPlayers", 6);
   
       const updatedGame = await Game.findById(game._id);
       expect(updatedGame).not.toBeNull();
       expect(updatedGame.title).toBe("Juego Actualizado");
-      expect(updatedGame.status).toBe("active");
+      expect(updatedGame.status).toBe("started");
       expect(updatedGame.maxPlayers).toBe(6);
     });
   

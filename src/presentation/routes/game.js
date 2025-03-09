@@ -1,5 +1,5 @@
 import express from 'express';
-import { post, getAll, get, deleted, update, joinGame, startGame, leaveGame, endGame, getStatus, getPlayers, getCurrentPlayer } from '../controllers/game.js';
+import { post, getAll, get, deleted, update, joinGame, startGame, leaveGame, endGame, getStatus, getPlayers, getCurrentPlayer, getCreator } from '../controllers/game.js';
 import { errorHandler } from '../middlewares/errorHandler.js';
 import { authenticateJWT } from '../middlewares/authMiddleware.js';
 
@@ -14,14 +14,12 @@ gameRouter.post("/end", authenticateJWT, endGame);
 gameRouter.post('/current-player', getCurrentPlayer);
 
 
-
-
-
 gameRouter.get('/', getAll);
 gameRouter.get('/:id', get);
 
 gameRouter.get('/:id/status', getStatus);
 gameRouter.get('/:id/players', getPlayers);
+gameRouter.get('/:id/creator', getCreator);
 
 
 

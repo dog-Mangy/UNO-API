@@ -142,8 +142,14 @@ export const getCurrentPlayerService = async (game_id) => {
 
     return { 
         status: 200, 
-        body: { game_id, current_player: currentPlayer.name }
-    };
+        body: { 
+            game_id, 
+            current_player: { 
+                name: currentPlayer.name, 
+                id: currentPlayer.id 
+            }
+        }
+    };    
 };
 
 export const getSatusByIdService = async (id) => {

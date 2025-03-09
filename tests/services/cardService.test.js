@@ -6,6 +6,13 @@ import { Game } from "../../src/data/models/gameModel.js";
 import { Player } from "../../src/data/models/userModel.js";
 import { Card } from "../../src/data/models/cardModel.js";
 import { jest } from "@jest/globals";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+
+
+
+dotenv.config();
+
 
 let mongoServer;
 
@@ -79,13 +86,20 @@ describe("PUT /cards/play", () => {
     });
 
     it("Debe permitir jugar una carta válida y ganar el juego", async () => {
+        const token = jwt.sign(
+            { id: player._id.toString(), email: player.email },
+            process.env.SECRET_KEY || "claveSuperSecreta",
+            { expiresIn: "1h" }
+        );
+    
         const response = await request(app)
             .put("/cards/play")
-            .send({ userId: player._id.toString(), cardId: playedCard._id.toString(), gameId: game._id.toString() });
-
+            .set("Authorization", `Bearer ${token}`) 
+            .send({ cardId: playedCard._id.toString(), gameId: game._id.toString() });
+    
         console.log("Respuesta recibida:", response.body);
-
+    
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty("message", "Carta jugada con éxito.");
+        expect(response.body).toHaveProperty("message", "Card played successfully.");
     });
 });
